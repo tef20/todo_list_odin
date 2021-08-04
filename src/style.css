@@ -1,0 +1,13 @@
+body {
+    height: 100vh;
+    
+    display: grid;
+    grid-template-columns: auto;
+
+    
+}
+
+
+h1 {
+    color: green;
+}
