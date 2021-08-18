@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scratch Todo</title>
+    <link rel="stylesheet" href="../src/reset.css">
+    <link rel="stylesheet" href="../src/style.css">
+    <script src="scratch.js" defer></script> 
+</head>
+<body>
+    <header>
+        <h1>Todo List</h1>
+    </header>
+    <main>
+        <nav>
+            <input type="checkbox" id="sideToggle">
+            <label for="sideToggle">></label>
+            <ul>
+                <li class="navHeading">
+                    <i>icon</i>Inbox
+                </li>
+                <li class="navHeading">
+                    <i>icon</i>Today
+                </li>
+                <li class="navHeading">
+                    <i>icon</i>Coming Up
+                </li>
+                <li id="projectsHeading" class="navHeading">
+                    <input type="checkbox" id="tagsToggle">
+                    <label for="tagsToggle">
+                        <i>icon</i>
+                        Tags \/
+                    </label>
+                    <ul id="projList">
+                        <li class="project">
+                            <i>icon</i>proj1
+                            <i class="checkIcon">delete</i>
+                        </li>
+                        <li class="project">
+                            <i>icon</i>proj2
+                            <i class="checkIcon">delete</i>
+                        </li>
+                        <li class="project">
+                            <i>icon</i>proj3
+                            <i class="checkIcon">delete</i>
+                        </li>
+                    </ul>
+                    <button id="addProject" class="project">
+                        <i>icon</i>Add project
+                    </button>
+                </li>
+            </ul>
+        </nav>
+        <section id="taskViewer">
+            <h2>View title</h2>
+            <ul>
+                <li class="task">
+                    <input type="checkbox" id="check1">
+                    <label for="check1">task1</label>
+                    <span>description</span>
+                    <span>due-date</span>
+                    <i class="checkIcon">priority</i>
+                    <i class="checkIcon">delete</i>
+                </li>
+                    <li class="task">
+                    <input type="checkbox" id="check2">
+                    <label for="check2">task2</label>
+                    <span>description</span>
+                    <span>due-date</span>
+                    <i class="checkIcon">priority</i>
+                    <i class="checkIcon">delete</i>
+                </li>
+                <li>
+                    <button id="addTask" class="task">
+                        <i>icon</i>Add task
+                    </button>
+                </li>
+            </ul>
+        </section>
+    </main>
+</body>
+</html>

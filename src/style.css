@@ -1,13 +1,118 @@
-body {
-    height: 100vh;
-    
-    display: grid;
-    grid-template-columns: auto;
-
-    
+/* -**VARIABLES**- */
+:root {
+    --header-col: rgba(100, 175, 237, 0.6);
+    --nav-col: rgba(230, 203, 223, 0.6);
+    --bg-col: whitesmoke;
+    --list-highlight: rgba(230, 203, 223);
+    --partition-col: grey;
+    --section-col: whitesmoke;
+    --font-col: grey;
 }
 
+body {
+    height: 100vh;
 
-h1 {
-    color: green;
+    background-color: var(--bg-col);
+    
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    height: 3rem;
+
+    background-color: var(--header-col);
+
+    display: flex;
+    /* width: 100vw; */
+    justify-content: center;
+    align-items: center;
+}
+
+main {
+    display: flex;
+    flex: 1;
+}
+
+main > * {
+    flex: 1;
+    /* border: 1px var(--partition-col) solid; */
+
+    padding: 20px;
+}
+
+/* SIDEBAR */
+
+/* 
+nav input[type=checkbox]:checked ~ ul {
+    display: none;
+} 
+*/
+
+nav input[type=checkbox]:checked ~ ul,
+nav input[type=checkbox]:checked ~ button {
+    display: none;
+}
+
+nav {
+    flex: 1;
+    background-color: var(--nav-col);
+}
+
+.navHeading {
+    padding: 5px 0px 10px 0px;
+}
+
+.project {
+    padding: 5px;
+}
+
+nav li {
+    cursor: pointer;
+}
+
+nav li:hover {
+    background-color: var(--list-highlight);
+}
+
+nav li input[type=checkbox] {
+    display: none;
+}
+
+nav li input[type=checkbox]:checked ~ ul {
+    display: none;
+}
+
+/* TASKS SECTION */
+#taskViewer {
+    flex: 4;
+}
+
+#taskViewer > h2::after {
+    content: "";
+    display: block;
+    
+    background-color: var(--partition-col);
+    height: 3px;
+    /* width: 80%; */
+    border-radius: 3px;
+    
+    margin: 5px 0;
+}
+
+#taskViewer li {
+    list-style: none;
+    
+    padding: 5px 0;
+    border-radius: 3px;
+
+    cursor: pointer;
+}
+
+#taskViewer li:hover {
+    background-color: var(--list-highlight);
+}
+
+#taskViewer input[type=checkbox]:checked ~ * {
+    color: red;
 }
