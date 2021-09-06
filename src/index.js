@@ -4,188 +4,208 @@ import { createTask, createTaskList, createProjectList } from './todoLogic.js';
 
 const body = document.body;
 
-const header = document.createElement('header');
+const header = createHeader();
 body.appendChild(header);
 
 const main = document.createElement('main');
 body.appendChild(main);
 
+const nav = createNav();
+main.appendChild(nav);
+
+const viewer = createViewer();
+main.appendChild(viewer);
+
 // const footer = document.createElement('footer');
 
 // Header
-const h1 = document.createElement('h1');
-h1.className = 'headerBar';
-h1.textContent = 'Main Header';
-header.appendChild(h1);
+function createHeader() {
+    const header = document.createElement('headerThe Arcade, Newbury');
+    body.appendChild(header);
 
-// Nav //
-const nav = document.createElement('nav');
-// nav.className = 'nav pagesection';
-main.appendChild(nav);
+    const h1 = document.createElement('h1');
+    h1.className = 'headerBar';
+    h1.textContent = 'Main Header';
+    header.appendChild(h1);
 
-// create side toggle
-const sideToggle = document.createElement('input');
-sideToggle.type = 'checkbox';
-sideToggle.id = 'sideToggle';
-nav.appendChild(sideToggle);
+    return header;
+}
 
-const sideToggleLabel = document.createElement('label');
-sideToggleLabel.htmlFor = 'sideToggle';
-sideToggleLabel.textContent = '>'
-nav.appendChild(sideToggleLabel);
+function createNav() {
+    // Nav //
+    const nav = document.createElement('nav');
+    // nav.className = 'nav pagesection';
 
-const navList = document.createElement('ul');
-// navList.className = 'navList';
-nav.appendChild(navList);
+    // create side toggle
+    const sideToggle = document.createElement('input');
+    sideToggle.type = 'checkbox';
+    sideToggle.id = 'sideToggle';
+    nav.appendChild(sideToggle);
 
-// Nav items 
-// Inbox
-const inbox = document.createElement('li');
-inbox.className = 'navHeading';
-inbox.textContent = "Inbox";
-navList.appendChild(inbox);
+    const sideToggleLabel = document.createElement('label');
+    sideToggleLabel.htmlFor = 'sideToggle';
+    sideToggleLabel.textContent = '>'
+    nav.appendChild(sideToggleLabel);
 
-const inboxIcon = document.createElement('i');
-inboxIcon.textContent = 'icon';
-inbox.insertAdjacentElement('afterbegin', inboxIcon);
+    const navList = document.createElement('ul');
+    // navList.className = 'navList';
+    nav.appendChild(navList);
 
-// Today
-const today= document.createElement('li');
-today.className = 'navHeading';
-today.textContent = "Today";
-navList.appendChild(today);
+    // Nav items 
+    // Inbox
+    const inbox = document.createElement('li');
+    inbox.className = 'navHeading';
+    inbox.textContent = "Inbox";
+    navList.appendChild(inbox);
 
-const todayIcon = document.createElement('i');
-todayIcon.textContent = 'icon';
-today.insertAdjacentElement('afterbegin', todayIcon);
+    const inboxIcon = document.createElement('i');
+    inboxIcon.textContent = 'icon';
+    inbox.insertAdjacentElement('afterbegin', inboxIcon);
 
-// Upcoming
-const upcoming = document.createElement('li');
-upcoming.className = 'navHeading';
-upcoming.textContent = "Upcoming";
-navList.appendChild(upcoming);
+    // Today
+    const today= document.createElement('li');
+    today.className = 'navHeading';
+    today.textContent = "Today";
+    navList.appendChild(today);
 
-const upcomingIcon = document.createElement('i');
-upcomingIcon.textContent = 'icon';
-upcoming.insertAdjacentElement('afterbegin', upcomingIcon);
+    const todayIcon = document.createElement('i');
+    todayIcon.textContent = 'icon';
+    today.insertAdjacentElement('afterbegin', todayIcon);
 
-// Projects toggle
-const projects = document.createElement('li');
-projects.id = 'projectsHeading';
-projects.className = 'navHeading';
-navList.appendChild(projects);
+    // Upcoming
+    const upcoming = document.createElement('li');
+    upcoming.className = 'navHeading';
+    upcoming.textContent = "Upcoming";
+    navList.appendChild(upcoming);
 
-const projectsToggle = document.createElement('input');
-projectsToggle.type = 'checkbox';
-projectsToggle.id = 'projectsToggle';
-projects.appendChild(projectsToggle);
+    const upcomingIcon = document.createElement('i');
+    upcomingIcon.textContent = 'icon';
+    upcoming.insertAdjacentElement('afterbegin', upcomingIcon);
 
-const projectsToggleLabel = document.createElement('label');
-projectsToggleLabel.htmlFor = 'projectsToggle';
-projectsToggleLabel.textContent = 'Projects \\/'
-projects.appendChild(projectsToggleLabel);
+    // Projects toggle
+    const projects = document.createElement('li');
+    projects.id = 'projectsHeading';
+    projects.className = 'navHeading';
+    navList.appendChild(projects);
 
-const projectsToggleIcon = document.createElement('i');
-projectsToggleIcon.textContent = 'icon';
-projectsToggleLabel.insertAdjacentElement('afterbegin', projectsToggleIcon);
+    const projectsToggle = document.createElement('input');
+    projectsToggle.type = 'checkbox';
+    projectsToggle.id = 'projectsToggle';
+    projects.appendChild(projectsToggle);
+
+    const projectsToggleLabel = document.createElement('label');
+    projectsToggleLabel.htmlFor = 'projectsToggle';
+    projectsToggleLabel.textContent = 'Projects \\/'
+    projects.appendChild(projectsToggleLabel);
+
+    const projectsToggleIcon = document.createElement('i');
+    projectsToggleIcon.textContent = 'icon';
+    projectsToggleLabel.insertAdjacentElement('afterbegin', projectsToggleIcon);
 
 
-// Projects
-const projectsList = document.createElement('ul');
-projectsList.className = 'navList';
-projectsList.id = 'projList';
-projects.appendChild(projectsList);
+    // Projects
+    const projectsList = document.createElement('ul');
+    projectsList.className = 'navList';
+    projectsList.id = 'projList';
+    projects.appendChild(projectsList);
 
-// Project
-const project = document.createElement('ul');
-project.className = 'project';
-project.id = 'projID';
-project.textContent = 'Test Project';
-projectsList.appendChild(project);
+    // Project
+    const project = document.createElement('ul');
+    project.className = 'project';
+    project.id = 'projID';
+    project.textContent = 'Test Project';
+    projectsList.appendChild(project);
 
-const projectIcon = document.createElement('i');
-projectIcon.textContent = 'icon';
-project.insertAdjacentElement('afterbegin', projectIcon);
+    const projectIcon = document.createElement('i');
+    projectIcon.textContent = 'icon';
+    project.insertAdjacentElement('afterbegin', projectIcon);
 
-const deleteProjectIcon = document.createElement('i');
-deleteProjectIcon.textContent = 'delete';
-project.appendChild(deleteProjectIcon);
+    const deleteProjectIcon = document.createElement('i');
+    deleteProjectIcon.textContent = 'delete';
+    project.appendChild(deleteProjectIcon);
 
-// Add Project Button
-const addProjectButton = document.createElement('button');
-addProjectButton.id = 'addProject';
-addProjectButton.className = 'project';
-// addProjectButton.className = 'project';
-addProjectButton.textContent = 'Add project';
-projectsList.appendChild(addProjectButton);
+    // Add Project Button
+    const addProjectButton = document.createElement('button');
+    addProjectButton.id = 'addProject';
+    addProjectButton.className = 'project';
+    // addProjectButton.className = 'project';
+    addProjectButton.textContent = 'Add project';
+    projectsList.appendChild(addProjectButton);
 
-const addProjectIcon = document.createElement('i');
-addProjectIcon.textContent = 'icon';
-addProjectButton.insertAdjacentElement('afterbegin', addProjectIcon);
+    const addProjectIcon = document.createElement('i');
+    addProjectIcon.textContent = 'icon';
+    addProjectButton.insertAdjacentElement('afterbegin', addProjectIcon);
 
-// Viewer //
-// Section
-const tasksViewer = document.createElement('section');
-tasksViewer.id = 'taskViewer';
-main.appendChild(tasksViewer);
+    return nav;
+}
 
-// View Title
-const tasksHeader = document.createElement('h2');
-tasksHeader.className = 'tasksHeader';
-tasksHeader.textContent = 'Task header';
-tasksViewer.appendChild(tasksHeader);
+function createViewer () {
+    // Viewer //
+    // Section
+    const tasksViewer = document.createElement('section');
+    tasksViewer.id = 'taskViewer';
 
-// Task List
-const tasksList = document.createElement('ul');
-tasksList.className = 'tasksList';
-tasksViewer.appendChild(tasksList);
+    // View Title
+    const tasksHeader = document.createElement('h2');
+    tasksHeader.className = 'tasksHeader';
+    tasksHeader.textContent = 'Task header';
+    tasksViewer.appendChild(tasksHeader);
 
-// Task
-const task = document.createElement('li');
-task.className = 'task';
-tasksList.appendChild(task);
+    // Task List
+    const tasksList = document.createElement('ul');
+    tasksList.className = 'tasksList';
+    tasksViewer.appendChild(tasksList);
 
-// Task Checkbox
-const taskCheckbox = document.createElement('input');
-taskCheckbox.id = `checkID${1}`;
-taskCheckbox.type = 'checkbox';
-task.appendChild(taskCheckbox);
+    // Task
+    const task = document.createElement('li');
+    task.className = 'task';
+    tasksList.appendChild(task);
 
-// Task Label
-const taskCheckboxLabel = document.createElement('label');
-taskCheckboxLabel.htmlFor = `checkID${1}`;
-taskCheckboxLabel.textContent = "Test task";
-task.appendChild(taskCheckboxLabel);
+    // Task Checkbox
+    const taskCheckbox = document.createElement('input');
+    taskCheckbox.id = `checkID${1}`;
+    taskCheckbox.type = 'checkbox';
+    task.appendChild(taskCheckbox);
 
-// Task Description
-const taskDescription = document.createElement('span');
-taskDescription.textContent = 'description';
-task.appendChild(taskDescription);
+    // Task Label
+    const taskCheckboxLabel = document.createElement('label');
+    taskCheckboxLabel.htmlFor = `checkID${1}`;
+    taskCheckboxLabel.textContent = "Test task";
+    task.appendChild(taskCheckboxLabel);
 
-// Task Due Date
-const taskDueDate = document.createElement('span');
-taskDueDate.textContent = '01.01.1999';
-task.appendChild(taskDueDate);
+    // Task Description
+    const taskDescription = document.createElement('span');
+    taskDescription.textContent = 'description';
+    task.appendChild(taskDescription);
 
-// Task Priority Icon
-const taskPriorityIcon = document.createElement('icon');
-taskPriorityIcon.className = 'checkIcon';
-taskPriorityIcon.textContent = 'medium';
-task.appendChild(taskPriorityIcon);
+    // Task Due Date
+    const taskDueDate = document.createElement('span');
+    taskDueDate.textContent = '01.01.1999';
+    task.appendChild(taskDueDate);
 
-// Task Delete Icon
-const taskDeleteIcon = document.createElement('icon');
-taskDeleteIcon.className = 'checkIcon';
-taskDeleteIcon.textContent = 'delete';
-task.appendChild(taskDeleteIcon);
+    // Task Priority Icon
+    const taskPriorityIcon = document.createElement('icon');
+    taskPriorityIcon.className = 'checkIcon';
+    taskPriorityIcon.textContent = 'medium';
+    task.appendChild(taskPriorityIcon);
 
-// Add Task Button
-const addTaskButton = document.createElement('button');
-addTaskButton.id = 'addTask';
-addTaskButton.className = 'task';
-addTaskButton.textContent = 'Add task';
-tasksList.appendChild(addTaskButton);
+    // Task Delete Icon
+    const taskDeleteIcon = document.createElement('icon');
+    taskDeleteIcon.className = 'checkIcon';
+    taskDeleteIcon.textContent = 'delete';
+    task.appendChild(taskDeleteIcon);
 
-const addTaskIcon = document.createElement('i');
-addTaskIcon.textContent = 'icon';
-addTaskButton.insertAdjacentElement('afterbegin', addTaskIcon);
+    // Add Task Button
+    const addTaskButton = document.createElement('button');
+    addTaskButton.id = 'addTask';
+    addTaskButton.className = 'task';
+    addTaskButton.textContent = 'Add task';
+    tasksList.appendChild(addTaskButton);
+
+    const addTaskIcon = document.createElement('i');
+    addTaskIcon.textContent = 'icon';
+    addTaskButton.insertAdjacentElement('afterbegin', addTaskIcon);
+
+    return tasksViewer;
+}
+
