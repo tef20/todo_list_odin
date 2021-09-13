@@ -1,7 +1,7 @@
 /* -**VARIABLES**- */
 :root {
     --header-col: rgba(100, 175, 237, 0.6);
-    --nav-col: rgba(230, 203, 223, 0.6);
+    --sidebar-col: rgba(230, 203, 223, 0.6);
     --bg-col: whitesmoke;
     --list-highlight: rgba(230, 203, 223);
     --partition-col: grey;
@@ -49,14 +49,14 @@ nav input[type=checkbox]:checked ~ ul {
 } 
 */
 
-nav input[type=checkbox]:checked ~ ul,
-nav input[type=checkbox]:checked ~ button {
+#sidebar input[type=checkbox]:checked ~ ul,
+#sidebar input[type=checkbox]:checked ~ button {
     display: none;
 }
 
-nav {
+#sidebar {
     flex: 1;
-    background-color: var(--nav-col);
+    background-color: var(--sidebar-col);
 }
 
 .navHeading {
@@ -67,19 +67,20 @@ nav {
     padding: 5px;
 }
 
-nav li {
+#sidebar li {
     cursor: pointer;
+    list-style: none;
 }
 
-nav li:hover {
+#sidebar li:hover {
     background-color: var(--list-highlight);
 }
 
-nav li input[type=checkbox] {
+#sidebar li input[type=checkbox] {
     display: none;
 }
 
-nav li input[type=checkbox]:checked ~ ul {
+#sidebar li input[type=checkbox]:checked ~ ul {
     display: none;
 }
 

@@ -1,4 +1,4 @@
-// import from pubsub
+import {events} from './pubSub';
 
 function createTask (name, description='description', due='none', priority='medium', project='unassigned', status='pending', id=genID.newID()) {
     // subscribe to project name changes
@@ -26,11 +26,28 @@ const genID = (() => {
     }
 
     return {newID};
+
 })();
 
 function createTaskList () {
     const _tasksList = [];
 
+    function list() {
+        return [..._tasksList]
+    }
+
+    function listToday() {
+        return _tasksList.filter(task => task.due === 'today');
+    }
+    
+    function listUpcoming() {
+        return _tasksList.filter(task => task.due === 'upcoming');
+    }
+    
+    function listByProject(project) {
+        return _tasksList.filter(task => task.project === project);
+    }
+    
     function listIDs () {
         return _tasksList.map(item => item.id)
     }
@@ -58,14 +75,16 @@ function createTaskList () {
     function addItem(newTask) {
         if (!(listIDs().includes(newTask.id))) {
             _tasksList.push(newTask);
+            // pubsub
+            events.on('tasks updated', list())
         }
-        // pubsub
     } 
 
     function removeItemByID(id) {
         if (_checkID(id)) {
             _tasksList.splice(_getItemIndex(id), 1);
             // pubsub
+            events.emit('tasks updated', list())
         }
     }
 
@@ -73,6 +92,7 @@ function createTaskList () {
         if (_checkID) {
             getItemByID(id).details = {...newDetails}
             // pubsub
+            events.emit('tasks updated', list())
         }
     }
 
@@ -88,17 +108,48 @@ function createTaskList () {
 
         return activeProjects;
     }
+
+    // when 
+    // item added
+    events.on('task added', addItem)
     
     return {
         listIDs,
+        list,
+        listToday,
+        listUpcoming,
         getItemByID,
         addItem,
         removeItemByID,
         editItemDetails,
         activeProjectsList,
+        // 
     }
 }
 
+function filters () {
+    const _filters = {};
+
+    // 
+
+    function getFilters() {
+        return {..._filters}
+    }
+
+    function addFilter(property, condition) {
+        _filters[property] = condition;
+    }
+
+    function removeFilter(property) {
+        delete _filters[property];
+    }
+
+    return {
+        addFilter,
+        getFilters,
+        removeFilter,
+    }
+}
 
 function createProjectList () {
     const _projectsList = new Set();
@@ -117,6 +168,7 @@ function createProjectList () {
         if (_projectsList.has(oldProject)) {
             _projectsList.delete(oldProject);
             _projectsList.add(newProject);
+
         }
         // publish oldProject -> newProject change 
     }
