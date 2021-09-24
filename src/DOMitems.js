@@ -56,8 +56,8 @@ function createHeader() {
     return header;
 }
 
+// Sidebar //
 function createSidebar() {
-    // Sidebar //
     const sidebar = document.createElement('section');
     sidebar.id = 'sidebar';
 
@@ -67,11 +67,8 @@ function createSidebar() {
     const filterTabsList = document.createElement('ul');
     filterTabsList.id = 'filterTabsList';
     sidebar.appendChild(filterTabsList);
-    
-    const allTab = createFilterTab(null, null);
-    filterTabsList.appendChild(allTab);
-    
-    events.on('taskUpdate', renderFilterTabs);
+        
+    events.on('filtersUpdate', renderFilterTabs);
 
     const newFilterButton = createNewFilterButton();
     sidebar.appendChild(newFilterButton);
@@ -92,62 +89,45 @@ function appendSideToggle(parent) {
 }
 
 function renderFilterTabs(filterData) {
-    const filterTabs = compileFilters(filterData);
     const filterTabsList = document.getElementById('filterTabsList');
     if (filterTabsList) {
         removeAllChildNodes(filterTabsList)
-        renderList(filterTabsList, filterTabs);
+        
+        for (let key in filterData) {
+            const filterTab = createFilterTab(filterData[key]);
+            filterTabsList.appendChild(filterTab);
+        }
     }    
 }
 
-function compileFilters(filterData) {
-    const filterTabs = [
-        [], 
-        // projects
-        [],
-    ]
-
-    // create default tab, 
-    const allTab = createFilterTab(null, null)
-    filterTabs[0].push(allTab);
-    
-    for (let filterInfo of filterData) {
-        const filterTab = createFilterTab(filterInfo.name, filterInfo.type)
-        if (filterInfo.type === 'project') {
-            filterTabs[1].push(filterTab);
-        }
-        else {
-            filterTabs[0].push(filterTab);
-        }
-    }
-
-    return filterTabs.flat();
-}
-
-function createFilterTab(filterName, filterType) {
+function createFilterTab({id, name, type}) {
     const filterTab = document.createElement('li');
     filterTab.className = 'filterTab';
-    filterTab.dataset.filterName = filterName;
-    filterTab.dataset.filterType = filterType;
-    filterTab.textContent = filterName === null ? 'inbox' : filterName;
+    filterTab.dataset.filterId = id;
+    filterTab.dataset.filterName = name;
+    
+    filterTab.textContent = name;
 
     const filterIcon = document.createElement('i');
     filterIcon.textContent = 'icon'; // getIcon(filterType);
     // filterTab.appendChild(filterIcon);
     filterTab.insertAdjacentElement('afterbegin', filterIcon);
 
-    if (filterType === 'project') {
+    if (type === 'project') {
         const deleteFilterIcon = document.createElement('i');
         deleteFilterIcon.textContent = 'delete';
         filterTab.appendChild(deleteFilterIcon);
     }    
 
+    filterTab.addEventListener('click', handleFilterClick);
+    
     return filterTab;
 }
 
-function renderList(parentNode, elementsList) {
-    for (tab in filterTabs) {
-        parent.appendChild(tab);
+function handleFilterClick(event) {
+    if (event.target.dataset.filterName) {
+        document.querySelector('.tasksHeader').textContent = event.target.dataset.filterName;
+        events.emit('requestTasks', event.target.dataset.filterId);
     }
 }
 
@@ -165,82 +145,188 @@ function createNewFilterButton() {
     return newFilterButton;
 }
 
+// View Window //
 function createViewer () {
-    // which view?
-    // default (inbox) or specified?
-
-    // elements:
-    // > title
-    // > constraints:
-    // -> time
-
-    // Viewer //
     // Section
     const tasksViewer = document.createElement('section');
     tasksViewer.id = 'taskViewer';
 
-    // View Title
+    // Header
     const tasksHeader = document.createElement('h2');
     tasksHeader.className = 'tasksHeader';
     tasksHeader.textContent = 'Task header';
-    tasksViewer.appendChild(tasksHeader);
+    tasksViewer.appendChild(tasksHeader)
+
+    events.on('updateViewHeader', updateViewHeader);
 
     // Task List
     const tasksList = document.createElement('ul');
     tasksList.className = 'tasksList';
     tasksViewer.appendChild(tasksList);
 
+    events.on('filterApplied', renderViewTasks);
+
+    // New Task Button
+    const addNewTaskButton = createAddTaskButton();
+    addNewTaskButton.addEventListener('click', openNewTaskForm)
+    tasksViewer.appendChild(addNewTaskButton);
+
+    
+    return tasksViewer;
+}
+
+function updateViewHeader (name) {
+    // View Title
+    const tasksHeader = document.querySelector('.tasksHeader');
+    tasksHeader.textContent = name;
+}
+
+function renderViewTasks(tasks) {
+    const tasksList = document.querySelector('.tasksList');
+    removeAllChildNodes(tasksList);
+
+    tasks.forEach(task => {
+        const taskEntry = createTaskEntry(task);
+        tasksList.appendChild(taskEntry);
+    });
+}
+
+function createTaskEntry(task) {
     // Task
-    const task = document.createElement('li');
-    task.className = 'task';
-    tasksList.appendChild(task);
+    const taskEntry = document.createElement('li');
+    taskEntry.className = 'task';
+    taskEntry.id = task.id;
 
     // Task Checkbox
     const taskCheckbox = document.createElement('input');
-    taskCheckbox.id = `checkID${1}`;
+    taskCheckbox.id = `checkID${task.id}`;
     taskCheckbox.type = 'checkbox';
-    task.appendChild(taskCheckbox);
+    taskEntry.appendChild(taskCheckbox);
 
     // Task Label
     const taskCheckboxLabel = document.createElement('label');
-    taskCheckboxLabel.htmlFor = `checkID${1}`;
-    taskCheckboxLabel.textContent = "Test task";
-    task.appendChild(taskCheckboxLabel);
+    taskCheckboxLabel.htmlFor = `checkID${task.id}`;
+    taskCheckboxLabel.textContent = task.name;
+    taskEntry.appendChild(taskCheckboxLabel);
 
     // Task Description
     const taskDescription = document.createElement('span');
-    taskDescription.textContent = 'description';
-    task.appendChild(taskDescription);
+    taskDescription.textContent = task.taskDescription;
+    taskEntry.appendChild(taskDescription);
 
     // Task Due Date
     const taskDueDate = document.createElement('span');
-    taskDueDate.textContent = '01.01.1999';
-    task.appendChild(taskDueDate);
+    taskDueDate.textContent = task.document;
+    taskEntry.appendChild(taskDueDate);
 
     // Task Priority Icon
     const taskPriorityIcon = document.createElement('icon');
     taskPriorityIcon.className = 'checkIcon';
-    taskPriorityIcon.textContent = 'medium';
-    task.appendChild(taskPriorityIcon);
+    taskPriorityIcon.textContent = task.priority;
+    taskEntry.appendChild(taskPriorityIcon);
 
     // Task Delete Icon
     const taskDeleteIcon = document.createElement('icon');
     taskDeleteIcon.className = 'checkIcon';
     taskDeleteIcon.textContent = 'delete';
-    task.appendChild(taskDeleteIcon);
+    taskEntry.appendChild(taskDeleteIcon);
 
+    return taskEntry;
+}
+
+function createAddTaskButton() {
     // Add Task Button
     const addTaskButton = document.createElement('button');
     addTaskButton.id = 'addTask';
     addTaskButton.className = 'task';
     addTaskButton.textContent = 'Add task';
-    tasksList.appendChild(addTaskButton);
 
     const addTaskIcon = document.createElement('i');
     addTaskIcon.textContent = 'icon';
     addTaskButton.insertAdjacentElement('afterbegin', addTaskIcon);
 
-    return tasksViewer;
+    return addTaskButton;
+}
+
+function createPopUpOverLay() {
+    const overLay = document.createElement('div');
+    overLay.id = 'popUpOverLay';
+
+    return overLay;
+}
+
+function createNewTaskPopUp () {
+    const newTaskPopUp = createPopUpOverLay();
+    const newTaskForm = createNewTaskForm();
+
+    newTaskPopUp.appendChild(newTaskForm);
+
+    return newTaskPopUp;
+}
+
+function createNewTaskForm() {
+    const addTaskForm = document.createElement('div');
+    addTaskForm.id = 'taskForm';
+
+    const formTitle = document.createElement('p');
+    formTitle.textContent ='New Task';
+    addTaskForm.appendChild(formTitle);
+
+    const nameInputLabel = document.createElement('label');
+    nameInputLabel.htmlFor = 'taskNameInput';
+    nameInputLabel.textContent = 'Name: '
+    addTaskForm.appendChild(nameInputLabel);
+    
+    const taskNameInput = document.createElement('input');
+    taskNameInput.className = 'newTaskInput';
+    taskNameInput.id = 'taskNameInput';
+    addTaskForm.appendChild(taskNameInput);
+    
+    const descriptionInputLabel = document.createElement('label');
+    descriptionInputLabel.htmlFor = 'detailsNameInput';
+    descriptionInputLabel.textContent = 'Description: '
+    addTaskForm.appendChild(descriptionInputLabel);
+    
+    const taskDescriptionInput = document.createElement('input');
+    taskDescriptionInput.className = 'newTaskInput';
+    taskDescriptionInput.id = 'taskDescriptionInput';
+    addTaskForm.appendChild(taskDescriptionInput);
+    
+    const projectInputLabel = document.createElement('label');
+    projectInputLabel.htmlFor = 'taskNameInput';
+    projectInputLabel.textContent = 'Project: '
+    addTaskForm.appendChild(projectInputLabel);
+    
+    const taskProjectInput = document.createElement('input');
+    taskProjectInput.className = 'newTaskInput';
+    taskProjectInput.id = 'taskProjectInput';
+    addTaskForm.appendChild(taskProjectInput);
+
+    const priorityInputLabel = document.createElement('label');
+    priorityInputLabel.htmlFor = 'taskNameInput';
+    priorityInputLabel.textContent = 'Priority: '
+    addTaskForm.appendChild(priorityInputLabel);
+    
+    const taskPriorityInput = document.createElement('input');
+    taskPriorityInput.className = 'newTaskInput';
+    taskPriorityInput.id = 'taskPriorityInput';
+    addTaskForm.appendChild(taskPriorityInput);
+
+    const saveTaskButton = document.createElement('button');
+    saveTaskButton.textContent = 'Save task';
+    addTaskForm.appendChild(saveTaskButton);
+    
+
+    return addTaskForm;
+}
+
+const newTaskPopUp = createNewTaskPopUp();
+document.body.appendChild(newTaskPopUp);
+
+function openNewTaskForm(){
+    const newTaskForm = document.getElementById('newTaskForm');
+    newTaskForm.setAttribute('style', 'display: flex');
+
 }
 
 export {

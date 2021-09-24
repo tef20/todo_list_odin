@@ -1,24 +1,31 @@
-import { loadPage, createHeader, createNav, createViewer } from './DOMitems.js';
-import { createTask, createTaskList, createProjectList } from './todoLogic.js';
-// import './consoleInterface.js';
+import { events } from './pubSub';
+import { loadPage } from './DOMitems.js';
+import { addTask, createTask, listTasks, runDemoTasks } from './tasks.js';
+import { addNewProject, applyFilter, getFilters, runDemoFilters } from './filters.js';
 
 function initiate() {
     // render page
-    const content = loadPage();
-
-    // check storage for items
+    loadPage();
+        
+    // check storage for tasks
+    // check storage for filters
     // if empty create new
-    const todoList = createTaskList();
-    const projectList = createProjectList();
-    // add to storage 
-
-    // render
-    
-    // return object?
+    runDemoTasks();
+    runDemoFilters();
 }
 
+events.on('requestTasks', handleTaskRequest);
 
+function handleTaskRequest(filterID) {
+    events.emit('filterSelected', filterID);
+    
+    const tasks = listTasks();
+    console.log(tasks);
+    events.emit('filterUpdated', tasks)
+}
+
+// load from storage
 
 export {
-    initiate
+    initiate,
 }
