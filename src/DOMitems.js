@@ -267,8 +267,13 @@ function createNewTaskPopUp () {
 function createNewTaskForm() {
     const addTaskForm = document.createElement('div');
     addTaskForm.id = 'taskForm';
+    
+    const closeFormButton = document.createElement('a');
+    closeFormButton.className = 'close';
+    closeFormButton.href = '#';
+    addTaskForm.appendChild(closeFormButton);
 
-    const formTitle = document.createElement('p');
+    const formTitle = document.createElement('h3');
     formTitle.textContent ='New Task';
     addTaskForm.appendChild(formTitle);
 
