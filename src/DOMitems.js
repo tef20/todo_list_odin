@@ -272,6 +272,7 @@ function createNewTaskForm() {
     closeFormButton.className = 'close';
     closeFormButton.href = '#';
     addTaskForm.appendChild(closeFormButton);
+    closeFormButton.addEventListener('click', () => {addTaskForm.style.display = 'none'});
 
     const formTitle = document.createElement('h3');
     formTitle.textContent ='New Task';
@@ -320,9 +321,15 @@ function createNewTaskForm() {
     const saveTaskButton = document.createElement('button');
     saveTaskButton.textContent = 'Save task';
     addTaskForm.appendChild(saveTaskButton);
-    
+    saveTaskButton.addEventListener('click', handleSaveTask);
 
     return addTaskForm;
+}
+
+function handleSaveTask(e) {
+    e.preventDefault();
+
+    document.getElementById('taskForm').style.display = 'none';
 }
 
 const newTaskPopUp = createNewTaskPopUp();
