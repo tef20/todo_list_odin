@@ -265,14 +265,18 @@ function createNewTaskPopUp () {
 }
 
 function createNewTaskForm() {
-    const addTaskForm = document.createElement('div');
+    const addTaskFormBox = document.createElement('div');
+    addTaskFormBox.id = 'taskFormBox';
+
+    const addTaskForm = document.createElement('form');
     addTaskForm.id = 'taskForm';
+    addTaskFormBox.appendChild(addTaskForm);
     
     const closeFormButton = document.createElement('a');
     closeFormButton.className = 'close';
     closeFormButton.href = '#';
     addTaskForm.appendChild(closeFormButton);
-    closeFormButton.addEventListener('click', () => {addTaskForm.style.display = 'none'});
+    closeFormButton.addEventListener('click', () => {addTaskFormBox.style.display = 'none'});
 
     const formTitle = document.createElement('h3');
     formTitle.textContent ='New Task';
@@ -323,13 +327,22 @@ function createNewTaskForm() {
     addTaskForm.appendChild(saveTaskButton);
     saveTaskButton.addEventListener('click', handleSaveTask);
 
-    return addTaskForm;
+    addTaskFormBox.addEventListener('submit', handleSaveTask);
+
+    return addTaskFormBox;
 }
 
 function handleSaveTask(e) {
     e.preventDefault();
 
-    document.getElementById('taskForm').style.display = 'none';
+    const newTaskName = document.getElementById('taskNameInput').value;
+    const newTaskDescription = document.getElementById('taskDescriptionInput').value;
+    const newTaskProject = document.getElementById('taskProjectInput').value;
+    const newTaskPriority = document.getElementById('taskPriorityInput').value;
+
+    console.log(newTaskName, newTaskDescription, newTaskProject, newTaskPriority);
+    
+    document.getElementById('taskFormBox').style.display = 'none';
 }
 
 const newTaskPopUp = createNewTaskPopUp();
