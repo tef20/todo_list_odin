@@ -1,4 +1,5 @@
 import { events } from './pubSub.js';
+import { createTask } from './tasks.js';
 
 // Load basic page
 function loadPage() {  
@@ -263,8 +264,6 @@ function createAddTaskButton() {
     return addTaskButton;
 }
 
-// 
-
 function createNewTaskPopUp () {
     const newTaskPopUp = createPopUp();
     const newTaskForm = createNewTaskForm();
@@ -343,7 +342,7 @@ function createNewTaskForm() {
     addTaskForm.appendChild(taskNameInput);
     
     const descriptionInputLabel = document.createElement('label');
-    descriptionInputLabel.htmlFor = 'detailsNameInput';
+    descriptionInputLabel.htmlFor = 'taskDescriptionInput';
     descriptionInputLabel.textContent = 'Description: '
     addTaskForm.appendChild(descriptionInputLabel);
     
@@ -353,7 +352,7 @@ function createNewTaskForm() {
     addTaskForm.appendChild(taskDescriptionInput);
     
     const projectInputLabel = document.createElement('label');
-    projectInputLabel.htmlFor = 'taskNameInput';
+    projectInputLabel.htmlFor = 'taskProjectInput';
     projectInputLabel.textContent = 'Project: '
     addTaskForm.appendChild(projectInputLabel);
     
@@ -361,9 +360,19 @@ function createNewTaskForm() {
     taskProjectInput.className = 'newTaskInput';
     taskProjectInput.id = 'taskProjectInput';
     addTaskForm.appendChild(taskProjectInput);
+    
+    const dueLabel = document.createElement('label');
+    dueLabel.htmlFor = 'taskDueInput';
+    dueLabel.textContent = 'Due: '
+    addTaskForm.appendChild(dueLabel);
+    
+    const taskDueInput = document.createElement('input');
+    taskDueInput.className = 'newTaskInput';
+    taskDueInput.id = 'taskDueInput';
+    addTaskForm.appendChild(taskDueInput);
 
     const priorityInputLabel = document.createElement('label');
-    priorityInputLabel.htmlFor = 'taskNameInput';
+    priorityInputLabel.htmlFor = 'taskPriorityInput';
     priorityInputLabel.textContent = 'Priority: '
     addTaskForm.appendChild(priorityInputLabel);
     
@@ -383,12 +392,20 @@ function createNewTaskForm() {
 function handleSaveTask(e) {
     e.preventDefault();
 
-    const newTaskName = document.getElementById('taskNameInput').value;
-    const newTaskDescription = document.getElementById('taskDescriptionInput').value;
-    const newTaskProject = document.getElementById('taskProjectInput').value;
-    const newTaskPriority = document.getElementById('taskPriorityInput').value;
+    const taskName = document.getElementById('taskNameInput').value;
+    const taskDescription = document.getElementById('taskDescriptionInput').value;
+    const taskProject = document.getElementById('taskProjectInput').value;
+    const taskDueDate = document.getElementById('taskDueInput').value;
+    const taskPriority = document.getElementById('taskPriorityInput').value;
 
-    console.log(newTaskName, newTaskDescription, newTaskProject, newTaskPriority);
+    events.emit('taskAdd', createTask(
+            taskName, 
+            taskDescription, 
+            taskDueDate, 
+            taskPriority, 
+            taskProject,
+        )
+    )
 }
 
 const newTaskPopUp = createNewTaskPopUp();
