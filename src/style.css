@@ -116,7 +116,7 @@ h3 {
     color: red;
 }
 
-#popUpOverLay {
+.popUpOverLay {
     display: flex;
     position: fixed;
     z-index: 2;
@@ -133,7 +133,11 @@ h3 {
     justify-content: center;
 }
 
-#taskFormBox {
+.inactive {
+    display: none;
+}
+
+.popUpContainer {
     background-color: aliceblue;
     border-radius: 3px;
 

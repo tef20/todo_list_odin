@@ -23,6 +23,21 @@ function loadPage() {
     const viewer = createViewer();
     main.appendChild(viewer);
 
+    // Popups
+    // new filter
+    // new task
+
+    // Binders 
+    // newFilterButton 'click'
+    // newFilterForm 'submit'
+    // newTodoButton 'click'
+    // newTodoForm 'submit'
+    // for each child of filterTabs
+    // filter 'click'
+    
+    // load event bindings
+    // loadEventBindings
+
     return content;
 }
 
@@ -248,35 +263,70 @@ function createAddTaskButton() {
     return addTaskButton;
 }
 
-function createPopUpOverLay() {
-    const overLay = document.createElement('div');
-    overLay.id = 'popUpOverLay';
-
-    return overLay;
-}
+// 
 
 function createNewTaskPopUp () {
-    const newTaskPopUp = createPopUpOverLay();
+    const newTaskPopUp = createPopUp();
     const newTaskForm = createNewTaskForm();
-
-    newTaskPopUp.appendChild(newTaskForm);
+    newTaskPopUp.querySelector('.popUpContainer').appendChild(newTaskForm);
+    newTaskPopUp.querySelector('.save').addEventListener('click', (e) => {
+        handleSaveTask(e);
+        newTaskPopUp.classList.toggle('inactive');
+    });
 
     return newTaskPopUp;
 }
 
-function createNewTaskForm() {
-    const addTaskFormBox = document.createElement('div');
-    addTaskFormBox.id = 'taskFormBox';
+function createPopUp() {
+    const overLay = document.createElement('div');
+    overLay.classList.add('popUpOverLay')
 
+    const popUpContainer = document.createElement('div');
+    popUpContainer.className = 'popUpContainer';
+    overLay.appendChild(popUpContainer);
+    
+    const closeButton = createCloseButton();
+    popUpContainer.appendChild(closeButton);
+
+    // generic popup bindings
+    // click close button to exit
+    closeButton.addEventListener('click', (e) => {
+        closePopUps();
+        // overLay.classList.add('inactive');
+    });
+    // click overlay to exit
+    overLay.addEventListener('click', (e) => {
+        if (e.target === overLay) {
+            closePopUps();
+        }
+    });
+    // press <esc> to exit
+    document.addEventListener('keyup', (e) => {
+        if (e.key === 'Escape') {
+            closePopUps();
+        }
+    });
+
+    return overLay;
+}
+
+function closePopUps() {
+    document.querySelectorAll('.popUpOverLay').forEach(popUp => {
+        popUp.classList.add('inactive');
+    })
+}
+
+function createCloseButton() {
+    const closeButton = document.createElement('a');
+    closeButton.className = 'close';
+    closeButton.href = '#';
+
+    return closeButton;
+}
+
+function createNewTaskForm() {
     const addTaskForm = document.createElement('form');
     addTaskForm.id = 'taskForm';
-    addTaskFormBox.appendChild(addTaskForm);
-    
-    const closeFormButton = document.createElement('a');
-    closeFormButton.className = 'close';
-    closeFormButton.href = '#';
-    addTaskForm.appendChild(closeFormButton);
-    closeFormButton.addEventListener('click', () => {addTaskFormBox.style.display = 'none'});
 
     const formTitle = document.createElement('h3');
     formTitle.textContent ='New Task';
@@ -324,12 +374,10 @@ function createNewTaskForm() {
 
     const saveTaskButton = document.createElement('button');
     saveTaskButton.textContent = 'Save task';
+    saveTaskButton.className = 'save';
     addTaskForm.appendChild(saveTaskButton);
-    saveTaskButton.addEventListener('click', handleSaveTask);
 
-    addTaskFormBox.addEventListener('submit', handleSaveTask);
-
-    return addTaskFormBox;
+    return addTaskForm;
 }
 
 function handleSaveTask(e) {
@@ -341,8 +389,6 @@ function handleSaveTask(e) {
     const newTaskPriority = document.getElementById('taskPriorityInput').value;
 
     console.log(newTaskName, newTaskDescription, newTaskProject, newTaskPriority);
-    
-    document.getElementById('taskFormBox').style.display = 'none';
 }
 
 const newTaskPopUp = createNewTaskPopUp();
