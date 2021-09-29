@@ -42,6 +42,7 @@ function addNewProject(projectName) {
     //     console.log(1, filts['1']['rules'])
     //     console.log(2, _filters['1']['rules']);
     // }
+    return project;
 }
 
 function createFilter(name, type, rules, id) {

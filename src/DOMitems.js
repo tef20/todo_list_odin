@@ -1,12 +1,12 @@
 import { events } from './pubSub.js';
 import { createTask } from './tasks.js';
+import { addNewProject, createFilter } from './filters.js'
+
+const content = createMainContainer();
+document.body.appendChild(content);
 
 // Load basic page
-function loadPage() {  
-    // create content container
-    const content = createContainer();
-    document.body.appendChild(content);
-    
+function loadPage() {      
     // create basic page
     // header
     const header = createHeader();
@@ -25,8 +25,19 @@ function loadPage() {
     main.appendChild(viewer);
 
     // Popups
-    // new filter
+    const popUpOverLay = createPopUpOverLay();
+    popUpOverLay.classList.add('inactive');
+    content.appendChild(popUpOverLay);
+
+    // new filter 
+    const newFilterForm = createNewFilterPopUp();
+    newFilterForm.classList.add('inactive');
+    popUpOverLay.appendChild(newFilterForm);
+
     // new task
+    const newTaskForm = createNewTaskPopUp();
+    newTaskForm.classList.add('inactive');
+    popUpOverLay.appendChild(newTaskForm);
 
     // Binders 
     // newFilterButton 'click'
@@ -48,7 +59,7 @@ function removeAllChildNodes(parent) {
     }
 }
 
-function createContainer() {
+function createMainContainer() {
     // clear existing container
     if (document.getElementById('content')) {
         document.removeChild(document.getElementById('content'));
@@ -157,8 +168,62 @@ function createNewFilterButton() {
     const addFilterIcon = document.createElement('i');
     addFilterIcon.textContent = 'icon';
     newFilterButton.insertAdjacentElement('afterbegin', addFilterIcon);
+    
+    newFilterButton.addEventListener('click', displayNewFilterPopUp);
 
     return newFilterButton;
+}
+
+function displayNewFilterPopUp() {
+    document.querySelector('.popUpOverLay').classList.remove('inactive');
+    document.querySelector('.newFilterPopUp').classList.remove('inactive');
+}
+
+function createNewFilterPopUp() {
+    const popUpBox = document.createElement('div');
+    popUpBox.classList.add('newFilterPopUp', 'popUp')
+    
+    const closeButton = createCloseButton();
+    popUpBox.appendChild(closeButton);
+
+    const newFilterForm = createNewFilterForm();
+    popUpBox.appendChild(newFilterForm);
+
+    return popUpBox;
+}
+
+function createNewFilterForm() {
+    const addFilterForm = document.createElement('form');
+    addFilterForm.id = 'filterForm';
+
+    const formTitle = document.createElement('h3');
+    formTitle.textContent ='New Filter';
+    addFilterForm.appendChild(formTitle);
+
+    const nameInputLabel = document.createElement('label');
+    nameInputLabel.htmlFor = 'filterNameInput';
+    nameInputLabel.textContent = 'Name: '
+    addFilterForm.appendChild(nameInputLabel);
+
+    const filterNameInput = document.createElement('input');
+    filterNameInput.className = 'newFilterInput';
+    filterNameInput.id = 'filterNameInput';
+    addFilterForm.appendChild(filterNameInput);
+
+    addFilterForm.addEventListener('submit', handleSaveFilter);
+    
+    return addFilterForm;
+}
+
+function handleSaveFilter(e) {
+    e.preventDefault();
+
+    const filterName = content.querySelector('#filterNameInput').value;
+    addNewProject(filterName);
+    // events.emit('filterAdd', addNewProject(filterName));
+
+    content.querySelector('#filterForm').reset()
+    closePopUps();
 }
 
 // View Window //
@@ -184,7 +249,7 @@ function createViewer () {
 
     // New Task Button
     const addNewTaskButton = createAddTaskButton();
-    addNewTaskButton.addEventListener('click', openNewTaskForm)
+    // addNewTaskButton.addEventListener('click', openNewTaskForm)
     tasksViewer.appendChild(addNewTaskButton);
 
     
@@ -261,38 +326,21 @@ function createAddTaskButton() {
     addTaskIcon.textContent = 'icon';
     addTaskButton.insertAdjacentElement('afterbegin', addTaskIcon);
 
+    // event binding
+    addTaskButton.addEventListener('click', displayNewTaskPopUp);
+
     return addTaskButton;
 }
 
-function createNewTaskPopUp () {
-    const newTaskPopUp = createPopUp();
-    const newTaskForm = createNewTaskForm();
-    newTaskPopUp.querySelector('.popUpContainer').appendChild(newTaskForm);
-    newTaskPopUp.querySelector('.save').addEventListener('click', (e) => {
-        handleSaveTask(e);
-        newTaskPopUp.classList.toggle('inactive');
-    });
-
-    return newTaskPopUp;
+function displayNewTaskPopUp() {
+    document.querySelector('.popUpOverLay').classList.remove('inactive');
+    document.querySelector('.newTaskPopUp').classList.remove('inactive');
 }
 
-function createPopUp() {
+function createPopUpOverLay() {
     const overLay = document.createElement('div');
-    overLay.classList.add('popUpOverLay')
+    overLay.classList.add('popUpOverLay', 'popUp');
 
-    const popUpContainer = document.createElement('div');
-    popUpContainer.className = 'popUpContainer';
-    overLay.appendChild(popUpContainer);
-    
-    const closeButton = createCloseButton();
-    popUpContainer.appendChild(closeButton);
-
-    // generic popup bindings
-    // click close button to exit
-    closeButton.addEventListener('click', (e) => {
-        closePopUps();
-        // overLay.classList.add('inactive');
-    });
     // click overlay to exit
     overLay.addEventListener('click', (e) => {
         if (e.target === overLay) {
@@ -309,10 +357,17 @@ function createPopUp() {
     return overLay;
 }
 
-function closePopUps() {
-    document.querySelectorAll('.popUpOverLay').forEach(popUp => {
-        popUp.classList.add('inactive');
-    })
+function createNewTaskPopUp() {
+    const popUpBox = document.createElement('div');
+    popUpBox.classList.add('newTaskPopUp', 'popUp')
+    
+    const closeButton = createCloseButton();
+    popUpBox.appendChild(closeButton);
+
+    const newTaskForm = createNewTaskForm();
+    popUpBox.appendChild(newTaskForm);
+
+    return popUpBox;
 }
 
 function createCloseButton() {
@@ -320,7 +375,16 @@ function createCloseButton() {
     closeButton.className = 'close';
     closeButton.href = '#';
 
+    // click close button to exit
+    closeButton.addEventListener('click', (e) => {
+        closePopUps();
+    });
+
     return closeButton;
+}
+
+function closePopUps() {
+    document.querySelectorAll('.popUp').forEach(element => element.classList.add('inactive'));
 }
 
 function createNewTaskForm() {
@@ -386,6 +450,8 @@ function createNewTaskForm() {
     saveTaskButton.className = 'save';
     addTaskForm.appendChild(saveTaskButton);
 
+    addTaskForm.addEventListener('submit', handleSaveTask);
+
     return addTaskForm;
 }
 
@@ -406,15 +472,9 @@ function handleSaveTask(e) {
             taskProject,
         )
     )
-}
 
-const newTaskPopUp = createNewTaskPopUp();
-document.body.appendChild(newTaskPopUp);
-
-function openNewTaskForm(){
-    const newTaskForm = document.getElementById('newTaskForm');
-    newTaskForm.setAttribute('style', 'display: flex');
-
+    content.querySelector('#taskForm').reset()
+    closePopUps();
 }
 
 export {

@@ -54,6 +54,7 @@ function createTask (name, description='description', due='none', priority='medi
 function addTask(newTask) {
         _tasks.push(newTask);
         events.emit('tasksUpdated', listTasks());
+        console.log(_tasks);
 } 
 
 function removeTaskByID(id) {

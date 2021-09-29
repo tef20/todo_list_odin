@@ -137,7 +137,8 @@ h3 {
     display: none;
 }
 
-.popUpContainer {
+.newTaskPopUp,
+.newFilterPopUp {
     background-color: aliceblue;
     border-radius: 3px;
 
