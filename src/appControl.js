@@ -10,18 +10,8 @@ function initiate() {
     // check storage for tasks
     // check storage for filters
     // if empty create new
-    runDemoTasks();
     runDemoFilters();
-}
-
-events.on('requestTasks', handleTaskRequest);
-
-function handleTaskRequest(filterID) {
-    events.emit('filterSelected', filterID);
-    
-    const tasks = listTasks();
-    console.log(tasks);
-    events.emit('filterUpdated', tasks)
+    runDemoTasks();
 }
 
 // load from storage

@@ -153,8 +153,9 @@ function createFilterTab({id, name, type}) {
 
 function handleFilterClick(event) {
     if (event.target.dataset.filterName) {
-        document.querySelector('.tasksHeader').textContent = event.target.dataset.filterName;
-        events.emit('requestTasks', event.target.dataset.filterId);
+        // document.querySelector('.tasksHeader').textContent = event.target.dataset.filterName;
+        // events.emit('requestTasks', event.target.dataset.filterId);
+        events.emit('updateLiveFilter', event.target.dataset.filterId);
     }
 }
 
@@ -220,7 +221,6 @@ function handleSaveFilter(e) {
 
     const filterName = content.querySelector('#filterNameInput').value;
     addNewProject(filterName);
-    // events.emit('filterAdd', addNewProject(filterName));
 
     content.querySelector('#filterForm').reset()
     closePopUps();
@@ -238,14 +238,14 @@ function createViewer () {
     tasksHeader.textContent = 'Task header';
     tasksViewer.appendChild(tasksHeader)
 
-    events.on('updateViewHeader', updateViewHeader);
+    events.on('filterApplied', updateViewHeader);
 
     // Task List
     const tasksList = document.createElement('ul');
     tasksList.className = 'tasksList';
     tasksViewer.appendChild(tasksList);
 
-    events.on('filterApplied', renderViewTasks);
+    events.on('publishFilteredTasks', renderViewTasks);
 
     // New Task Button
     const addNewTaskButton = createAddTaskButton();
@@ -256,7 +256,7 @@ function createViewer () {
     return tasksViewer;
 }
 
-function updateViewHeader (name) {
+function updateViewHeader ({name}) {
     // View Title
     const tasksHeader = document.querySelector('.tasksHeader');
     tasksHeader.textContent = name;

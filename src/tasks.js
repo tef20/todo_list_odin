@@ -1,5 +1,20 @@
-import {events} from './pubSub';
+import { events } from './pubSub';
 import { genID as taskIDFactory} from './idGenerator.js';
+// import { applyFilter } from './filters';
+
+
+// filtersList
+// add 
+// remove
+// liveFilter
+
+// tasksList
+// task viewState
+// add
+// remove
+// edit
+// setVisabilities(filter)
+
 
 const _tasks = [];
 const IDGenerator = taskIDFactory();
@@ -8,20 +23,15 @@ events.on('taskAdd', addTask);
 events.on('taskRemove', removeTaskByID);
 events.on('taskEdit', editTaskDetail);
 
+events.on('publishLiveFilter', applyFilter);
+events.on('tasksUpdated', requestLiveFilter);
+// events.on('tasksUpdated', publishFilteredTasks);
 
 function listTasks() {
     return JSON.parse(JSON.stringify(_tasks));
 }
 
-function createTask (name, description='description', due='none', priority='medium', project='unassigned', status='pending', id=IDGenerator.newID()) {
-    // let _name = name;
-    // let _description = description;
-    // let _due = due;
-    // let _priority = priority;
-    // let _project = project;
-    // let _status = status;
-    // let _id = id;
-
+function createTask (name, description='description', due='none', priority='medium', project='unassigned', status='pending', selected=true, id=IDGenerator.newID()) {
     const _task = {
         name, 
         description,
@@ -29,15 +39,16 @@ function createTask (name, description='description', due='none', priority='medi
         priority,
         project,
         status,
+        selected,
         id,
     }
         
-    function getAttribute(key, value){
-        return _task[key] = value;
+    function getAttribute(attribute){
+        return _task[attribute];
     }
 
-    function setAttribute(key, value) {
-        _task[key] = value;
+    function setAttribute(attribute, newValue) {
+        _task[attribute] = newValue;
     }
 
     return {
@@ -47,6 +58,7 @@ function createTask (name, description='description', due='none', priority='medi
         priority,
         project,
         status,
+        selected,
         id,
     }
 }
@@ -54,7 +66,6 @@ function createTask (name, description='description', due='none', priority='medi
 function addTask(newTask) {
         _tasks.push(newTask);
         events.emit('tasksUpdated', listTasks());
-        console.log(_tasks);
 } 
 
 function removeTaskByID(id) {
@@ -68,7 +79,7 @@ function clearAllTasks() {
     while (_tasks.length > 0) {
         _tasks.pop();
     }
-    events.emit('tasksUpdate', listTasks());
+    events.emit('tasksUpdated', listTasks());
 }
 
 function editTaskDetail(id, taskDetail, newValue) {
@@ -79,6 +90,24 @@ function editTaskDetail(id, taskDetail, newValue) {
             break;
         }
     }
+}
+
+function requestLiveFilter() {
+    events.emit('requestLiveFilter');
+}
+
+function applyFilter(filter) {
+    const {rules} = filter; 
+    _tasks.forEach(task => {
+        task['selected'] = rules.every(rule => rule(task)) ? true : false;
+    });
+        
+    events.emit('filterApplied', filter);
+    events.emit('publishFilteredTasks', getFilteredTasks());
+}
+
+function getFilteredTasks() {
+    return _tasks.filter(task => task['selected'] === true);
 }
 
 function _checkID(id) {

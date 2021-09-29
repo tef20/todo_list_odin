@@ -5,7 +5,7 @@ const _filters = {}
 
 const IDGenerator = filterIDFactory();
 
-let _liveFilter = 0;
+let _liveFilter;
 
 function getLiveFilter() {
     return _liveFilter;
@@ -14,6 +14,7 @@ function getLiveFilter() {
 function setLiveFilter(filterID) {
     if (Object.keys(_filters).includes(filterID)) {
         _liveFilter = filterID;
+        events.emit('liveFilterUpdated', filterID);
     }
 }
 
@@ -22,35 +23,27 @@ function getFilters() {
 }
 
 function getFilterByID(filterID) {
-    return JSON.parse(JSON.stringify(_filters[filterID]));
+    return _filters[filterID];
 }
 
 function addNewProject(projectName) {
     const condition = makeProjectMatchCondition(projectName);
-    // console.log('condition: ', condition);
-    // const dummyTask = {'project': projectName}
-    // console.log('result: ', condition(dummyTask));
     const conditionsList = [];
     conditionsList.push(condition);
-    // console.log({conditionsList})
     const project = createFilter(projectName, 'project', conditionsList);
-    // console.log(project)
     addFilter(project);
     const filts = getFilters();
-    // console.log(filts)
-    // if (Object.keys(filts).includes('1')) {
-    //     console.log(1, filts['1']['rules'])
-    //     console.log(2, _filters['1']['rules']);
-    // }
+
     return project;
 }
 
-function createFilter(name, type, rules, id) {
+function createFilter(name, type, rules, id, status) {
     return {
         name, 
         type, 
         rules,
         id,
+        status,
     }
 }
 
@@ -110,6 +103,10 @@ function makeProjectMatchCondition(projectName) {
     }
 }
 
+function publishLiveFilter() {
+    events.emit('publishLiveFilter', getFilterByID(_liveFilter));
+}
+
 function applyFilter(tasksList) {
     const filteredTasks = tasksList.filter(task => {
         const filters = getFilters();
@@ -126,6 +123,7 @@ function addDefaultFilters() {
     // inbox
     const inboxFilter = createFilter('Inbox', 'inbox', []);
     addFilter(inboxFilter);
+    setLiveFilter('0');
 
     // today
     // const todayFilter = createFilter('Today', 'due', makeDueDaysCondition(0));
@@ -145,8 +143,12 @@ function runDemoFilters() {
     addNewProject('Website');
 }
 
-events.on('filterSelected', setLiveFilter);
-events.on('filterUpdated', applyFilter);
+events.on('updateLiveFilter', setLiveFilter);
+events.on('requestLiveFilter', publishLiveFilter)
+events.on('liveFilterUpdated', publishLiveFilter)
+
+// events.on('filterSelected', setLiveFilter);
+// events.on('filterUpdated', applyFilter);
 events.on('filterAdd', addFilter);
 events.on('filterRemove', removeFilterByID);
 events.on('filterEdit', editFilter);
