@@ -1,6 +1,8 @@
 import { events } from './pubSub.js';
 import { createTask } from './tasks.js';
-import { addNewProject, createFilter } from './filters.js'
+import { createGoogleIcon, materialIconsOutlinedStylesheetLink } from './googleFonts.js';
+
+document.head.appendChild(materialIconsOutlinedStylesheetLink);
 
 const content = createMainContainer();
 document.body.appendChild(content);
@@ -40,15 +42,8 @@ function loadPage() {
     popUpOverLay.appendChild(newTaskForm);
 
     // Binders 
-    // newFilterButton 'click'
-    // newFilterForm 'submit'
-    // newTodoButton 'click'
-    // newTodoForm 'submit'
-    // for each child of filterTabs
-    // filter 'click'
-    
-    // load event bindings
-    // loadEventBindings
+    events.on('filterApplied', markSelectedFilter);
+    // events.on('liveFilterUpdated', markSelectedFilter)
 
     return content;
 }
@@ -77,7 +72,7 @@ function createHeader() {
 
     const h1 = document.createElement('h1');
     h1.className = 'headerBar';
-    h1.textContent = 'Main Header';
+    h1.textContent = 'You have so much to do.';
     header.appendChild(h1);
 
     return header;
@@ -107,12 +102,18 @@ function appendSideToggle(parent) {
     const sideToggle = document.createElement('input');
     sideToggle.type = 'checkbox';
     sideToggle.id = 'sideToggle';
+    sideToggle.classList.add('checkbox');
     parent.appendChild(sideToggle);
 
     const sideToggleLabel = document.createElement('label');
     sideToggleLabel.htmlFor = 'sideToggle';
-    sideToggleLabel.textContent = '>'
+    // sideToggleLabel.textContent = 'hi'
     parent.appendChild(sideToggleLabel);
+
+    const toggleIcon = createGoogleIcon('expansion');
+    toggleIcon.classList.add('toggleIcon', 'tabIcon');
+    toggleIcon.addEventListener('click', (e)=> e.target.classList.toggle('collapsed'));
+    sideToggleLabel.appendChild(toggleIcon);
 }
 
 function renderFilterTabs(filterData) {
@@ -124,7 +125,17 @@ function renderFilterTabs(filterData) {
             const filterTab = createFilterTab(filterData[key]);
             filterTabsList.appendChild(filterTab);
         }
-    }    
+    }
+}
+
+function markSelectedFilter({id}) {
+    document.querySelectorAll('.filterTab').forEach(tab => {
+        if (tab.dataset.filterId == id) {
+            tab.classList.add('selectedTab');
+        } else {
+            tab.classList.remove('selectedTab');
+        }
+    })
 }
 
 function createFilterTab({id, name, type}) {
@@ -133,29 +144,44 @@ function createFilterTab({id, name, type}) {
     filterTab.dataset.filterId = id;
     filterTab.dataset.filterName = name;
     
-    filterTab.textContent = name;
+    const filterIcon = createGoogleIcon(type);
+    filterIcon.classList.add('tabIcon');
+    filterIcon.dataset.filterId = id;
+    filterIcon.dataset.filterName = name;
+    filterTab.appendChild(filterIcon);
 
-    const filterIcon = document.createElement('i');
-    filterIcon.textContent = 'icon'; // getIcon(filterType);
-    // filterTab.appendChild(filterIcon);
-    filterTab.insertAdjacentElement('afterbegin', filterIcon);
+    const tabInfo = document.createElement('span');
+    tabInfo.className = 'expandedTab';
+    tabInfo.textContent = name;
+    tabInfo.dataset.filterId = id;
+    tabInfo.dataset.filterName = name;
+    filterTab.appendChild(tabInfo);
 
     if (type === 'project') {
-        const deleteFilterIcon = document.createElement('i');
-        deleteFilterIcon.textContent = 'delete';
+        const deleteFilterIcon = createGoogleIcon('delete');
+        deleteFilterIcon.classList.add('expandedTab', 'tabIcon');
+        deleteFilterIcon.dataset.filterId = id;
+        deleteFilterIcon.dataset.filterName = name;
+
         filterTab.appendChild(deleteFilterIcon);
+        deleteFilterIcon.addEventListener('click', handleFilterRemove);
     }    
 
-    filterTab.addEventListener('click', handleFilterClick);
+    filterIcon.addEventListener('click', handleFilterSelect);
+    tabInfo.addEventListener('click', handleFilterSelect);
     
     return filterTab;
 }
 
-function handleFilterClick(event) {
+function handleFilterSelect(event) {
     if (event.target.dataset.filterName) {
-        // document.querySelector('.tasksHeader').textContent = event.target.dataset.filterName;
-        // events.emit('requestTasks', event.target.dataset.filterId);
         events.emit('updateLiveFilter', event.target.dataset.filterId);
+    }
+}
+
+function handleFilterRemove(event) {
+    if (event.target.dataset.filterName) {
+        events.emit('filterRemove', event.target.dataset.filterId);
     }
 }
 
@@ -163,12 +189,15 @@ function createNewFilterButton() {
     // Add Project Button
     const newFilterButton = document.createElement('button');
     newFilterButton.id = 'newFilterButton';
-    // newFilterButton.className = 'project';
-    newFilterButton.textContent = 'Add new';
 
-    const addFilterIcon = document.createElement('i');
-    addFilterIcon.textContent = 'icon';
-    newFilterButton.insertAdjacentElement('afterbegin', addFilterIcon);
+    const addFilterIcon = createGoogleIcon('add');
+    addFilterIcon.classList.add('tabIcon');
+    newFilterButton.appendChild(addFilterIcon);
+    
+    const buttonTitle = document.createElement('span');
+    buttonTitle.className = 'expandedTab';
+    buttonTitle.textContent = 'Add project';
+    newFilterButton.appendChild(buttonTitle);
     
     newFilterButton.addEventListener('click', displayNewFilterPopUp);
 
@@ -220,7 +249,7 @@ function handleSaveFilter(e) {
     e.preventDefault();
 
     const filterName = content.querySelector('#filterNameInput').value;
-    addNewProject(filterName);
+    events.emit('projectAdd', filterName)
 
     content.querySelector('#filterForm').reset()
     closePopUps();
@@ -282,37 +311,54 @@ function createTaskEntry(task) {
     const taskCheckbox = document.createElement('input');
     taskCheckbox.id = `checkID${task.id}`;
     taskCheckbox.type = 'checkbox';
+    taskCheckbox.className = 'checkbox';
     taskEntry.appendChild(taskCheckbox);
 
     // Task Label
-    const taskCheckboxLabel = document.createElement('label');
-    taskCheckboxLabel.htmlFor = `checkID${task.id}`;
-    taskCheckboxLabel.textContent = task.name;
-    taskEntry.appendChild(taskCheckboxLabel);
+    const taskLabel = document.createElement('label');
+    taskLabel.htmlFor = `checkID${task.id}`;
+    taskEntry.appendChild(taskLabel);
+    
+    const taskName = document.createElement('span');
+    taskName.textContent = task.name;
+    taskLabel.appendChild(taskName);
 
     // Task Description
     const taskDescription = document.createElement('span');
-    taskDescription.textContent = task.taskDescription;
-    taskEntry.appendChild(taskDescription);
+    taskDescription.textContent = task.description ? task.description : '';
+    taskLabel.appendChild(taskDescription);
 
     // Task Due Date
     const taskDueDate = document.createElement('span');
-    taskDueDate.textContent = task.document;
-    taskEntry.appendChild(taskDueDate);
+    taskDueDate.textContent = task.due;
+    taskLabel.appendChild(taskDueDate);
 
     // Task Priority Icon
-    const taskPriorityIcon = document.createElement('icon');
-    taskPriorityIcon.className = 'checkIcon';
-    taskPriorityIcon.textContent = task.priority;
-    taskEntry.appendChild(taskPriorityIcon);
+    // const taskPriorityIcon = document.createElement('span');
+    const taskPriorityIcon = createGoogleIcon('priority');
+    taskPriorityIcon.classList.add('taskIcon', `priority${task.priority}`);
+    taskLabel.appendChild(taskPriorityIcon);
+
+    // Task Edit Icon
+    const taskEditIcon = createGoogleIcon('edit');
+    taskEditIcon.classList.add('taskIcon');
+    taskEntry.appendChild(taskEditIcon);
 
     // Task Delete Icon
-    const taskDeleteIcon = document.createElement('icon');
-    taskDeleteIcon.className = 'checkIcon';
-    taskDeleteIcon.textContent = 'delete';
+    const taskDeleteIcon = createGoogleIcon('delete');
+    taskDeleteIcon.dataset.taskId = task.id;
+    taskDeleteIcon.classList.add('taskIcon');
+    taskDeleteIcon.addEventListener('click', handleTaskRemove);
     taskEntry.appendChild(taskDeleteIcon);
 
     return taskEntry;
+}
+
+function handleTaskRemove(e) {
+    const taskID = e.target.dataset.taskId;
+    if (taskID) {
+        events.emit('taskRemove', taskID);
+    }
 }
 
 function createAddTaskButton() {
@@ -322,8 +368,7 @@ function createAddTaskButton() {
     addTaskButton.className = 'task';
     addTaskButton.textContent = 'Add task';
 
-    const addTaskIcon = document.createElement('i');
-    addTaskIcon.textContent = 'icon';
+    const addTaskIcon = createGoogleIcon('add');
     addTaskButton.insertAdjacentElement('afterbegin', addTaskIcon);
 
     // event binding

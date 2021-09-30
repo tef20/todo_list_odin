@@ -1,20 +1,5 @@
 import { events } from './pubSub';
 import { genID as taskIDFactory} from './idGenerator.js';
-// import { applyFilter } from './filters';
-
-
-// filtersList
-// add 
-// remove
-// liveFilter
-
-// tasksList
-// task viewState
-// add
-// remove
-// edit
-// setVisabilities(filter)
-
 
 const _tasks = [];
 const IDGenerator = taskIDFactory();
@@ -25,13 +10,12 @@ events.on('taskEdit', editTaskDetail);
 
 events.on('publishLiveFilter', applyFilter);
 events.on('tasksUpdated', requestLiveFilter);
-// events.on('tasksUpdated', publishFilteredTasks);
 
 function listTasks() {
     return JSON.parse(JSON.stringify(_tasks));
 }
 
-function createTask (name, description='description', due='none', priority='medium', project='unassigned', status='pending', selected=true, id=IDGenerator.newID()) {
+function createTask (name, description='', due='', priority='medium', project='unassigned', status='pending', selected=true, id=IDGenerator.newID()) {
     const _task = {
         name, 
         description,
@@ -111,12 +95,12 @@ function getFilteredTasks() {
 }
 
 function _checkID(id) {
-    return _tasks.find(element => element.id === id);
+    return _tasks.find(element => element.id == id);
 }
 
 function _getItemIndex(id) {
     for (let i = 0; i < _tasks.length; i++) {
-        if (_tasks['id'] = id) {
+        if (_tasks[i]['id'] == id) {
             return i;
         }
     }
@@ -127,14 +111,17 @@ function runDemoTasks() {
 
     const demoTask1 = createTask('Wash the dishes');
     demoTask1['project'] = 'Housework';
+    demoTask1['priority'] = 'medium';
     addTask(demoTask1);
     
     const demoTask2 = createTask('Learn html');
     demoTask2['project'] = 'Website';
+    demoTask2['priority'] = 'high';
     addTask(demoTask2);
     
     const demoTask3 = createTask('Buy a banana');
     demoTask3['project'] = 'Shopping List';
+    demoTask3['priority'] = 'low';
     addTask(demoTask3);
     
 }

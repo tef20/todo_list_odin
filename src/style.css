@@ -1,90 +1,143 @@
 /* -**VARIABLES**- */
 :root {
-    --header-col: rgba(100, 175, 237, 0.6);
-    --sidebar-col: rgba(230, 203, 223, 0.6);
+    --header-col: rgb(126, 190, 243);
+    --sidebar-col: rgba(230, 203, 223);
+    --sidebar-highlight: rgb(235, 174, 218);
+    --todo-highlight: rgb(236, 234, 234);
     --bg-col: whitesmoke;
-    --list-highlight: rgba(230, 203, 223);
     --partition-col: grey;
     --section-col: whitesmoke;
     --font-col: grey;
 }
 
-body {
+/* .material-icons-outlined {
+
+} */
+
+#content {
     height: 100vh;
 
     background-color: var(--bg-col);
     
     display: flex;
     flex-direction: column;
+
+    height: 100vh;
 }
 
 header {
-    height: 3rem;
-
-    background-color: var(--header-col);
-
     display: flex;
-    /* width: 100vw; */
-    justify-content: center;
+    flex: 1;
+    padding: 0px 5%;
+    justify-content: flex-end;
     align-items: center;
+    height: 3rem;
+    background-color: var(--header-col);
+}
+
+header h1 {
+    font-size: 20px;
 }
 
 main {
     display: flex;
-    flex: 1;
+    
+    /* border: 1px red solid; */
+    flex: 9;
 }
 
 main > * {
-    flex: 1;
-    /* border: 1px var(--partition-col) solid; */
-
-    padding: 20px;
+    padding: 5px;
 }
-
-/* SIDEBAR */
 
 h3 {
     margin-bottom: 4%;
 }
 
-#sidebar input[type=checkbox]:checked ~ ul,
-#sidebar input[type=checkbox]:checked ~ button {
-    display: none;
-}
-
+/* SIDEBAR */
 #sidebar {
-    flex: 1;
+    /* border: 1px solid red; */
     background-color: var(--sidebar-col);
 }
 
-.navHeading {
-    padding: 5px 0px 10px 0px;
+/* Sidebar toggle */
+#sidebar input[type=checkbox] {
+    display: none;
 }
 
-.project {
-    padding: 5px;
+#sidebar input[type=checkbox]:checked ~ * .expandedTab {
+    display: none;
 }
 
+.toggleIcon {
+    transition: transform .25s;
+}
+
+.toggleIcon.collapsed {
+    transform: rotate(90deg);
+    transition: transform .25s;
+}
+
+/* Sidebar items */
 #sidebar li {
-    cursor: pointer;
+    display: flex;
+    margin: 5px 0px;
+    /* padding: 5px 0px; */
+    border-radius: 4px;
+
+    cursor: default;
     list-style: none;
+
+    align-items: center;
 }
 
-#sidebar li:hover {
-    background-color: var(--list-highlight);
+#sidebar li span {
+    white-space: nowrap;
+    width: 100%;
+    font-size: 20px;
+
+    cursor: pointer;
 }
 
-#sidebar li input[type=checkbox] {
-    display: none;
+.tabIcon {
+    padding: 5px;
+    cursor: pointer;
 }
 
-#sidebar li input[type=checkbox]:checked ~ ul {
-    display: none;
+#sidebar .selectedTab {
+    background-color: var(--sidebar-highlight);
 }
+
+#newFilterButton {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    border-style: none;
+    font-size: 17px;
+
+    margin: 5px 0px;
+    padding: 0px;
+    border-radius: 4px;
+    
+    background-color: var(--sidebar-col);
+}
+
+#newFilterButton:hover {
+    cursor: pointer;
+    background-color: var(--sidebar-highlight);
+}
+
 
 /* TASKS SECTION */
 #taskViewer {
-    flex: 4;
+    padding: 20px 30px;
+    flex-basis: 100%;
+}
+
+#taskViewer h2 {
+    font-size: 35px;
+    margin: 17px 0 0 0;
+    padding: 0px 5px;
 }
 
 #taskViewer > h2::after {
@@ -93,27 +146,80 @@ h3 {
     
     background-color: var(--partition-col);
     height: 3px;
-    /* width: 80%; */
+    /* width: 90%; */
     border-radius: 3px;
     
     margin: 5px 0;
 }
 
 #taskViewer li {
+    display: flex;
+    
+    align-items: center;
     list-style: none;
     
-    padding: 5px 0;
+    padding: 7px 5px;
     border-radius: 3px;
-
-    cursor: pointer;
 }
 
 #taskViewer li:hover {
-    background-color: var(--list-highlight);
+    background-color: var(--todo-highlight);
+}
+#taskViewer input[type=checkbox] {
+    display: none;
 }
 
 #taskViewer input[type=checkbox]:checked ~ * {
+    color: grey;
+}
+
+#taskViewer li label {
+    display: flex;
+    width: 80%;
+    justify-content: space-between;
+    
+    cursor: pointer;
+}
+
+#taskViewer li label span {
+    /* border: solid red 1px; */
+    width: 100%;
+    font-size: 20px;
+}
+
+.prioritylow {
+    color: green;
+}
+
+.prioritymedium {
+    color: orange;
+}
+
+.priorityhigh {
     color: red;
+}
+
+.taskIcon {
+    cursor: pointer;
+}
+
+#addTask {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    border-style: none;
+    font-size: 17px;
+
+    margin: 5px 0px;
+    padding: 7px 0px;
+    border-radius: 4px;
+
+    background-color: inherit;
+}
+
+#addTask:hover {
+    cursor: pointer;
+    background-color: rgb(216, 250, 166);
 }
 
 .popUpOverLay {

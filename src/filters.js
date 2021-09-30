@@ -7,9 +7,15 @@ const IDGenerator = filterIDFactory();
 
 let _liveFilter;
 
-function getLiveFilter() {
-    return _liveFilter;
-}
+events.on('updateLiveFilter', setLiveFilter);
+events.on('requestLiveFilter', publishLiveFilter)
+events.on('liveFilterUpdated', publishLiveFilter)
+
+events.on('filterAdd', addFilter);
+events.on('projectAdd', addProjectFilter);
+events.on('filterRemove', removeFilterByID);
+events.on('filterEdit', editFilter);
+events.on('runDemo', runDemoFilters);
 
 function setLiveFilter(filterID) {
     if (Object.keys(_filters).includes(filterID)) {
@@ -19,31 +25,28 @@ function setLiveFilter(filterID) {
 }
 
 function getFilters() {
-    return JSON.parse(JSON.stringify(_filters));
+    return _filters;
 }
 
 function getFilterByID(filterID) {
     return _filters[filterID];
 }
 
-function addNewProject(projectName) {
-    const condition = makeProjectMatchCondition(projectName);
-    const conditionsList = [];
-    conditionsList.push(condition);
+function addProjectFilter(projectName) {
+    const conditionsList = [makeProjectMatchCondition(projectName)];
     const project = createFilter(projectName, 'project', conditionsList);
     addFilter(project);
-    const filts = getFilters();
 
     return project;
 }
 
-function createFilter(name, type, rules, id, status) {
+function createFilter(name, type, rules, state, id) {
     return {
         name, 
         type, 
         rules,
+        state,
         id,
-        status,
     }
 }
 
@@ -137,26 +140,16 @@ function addDefaultFilters() {
 function runDemoFilters() {
     clearAllFilters();
     addDefaultFilters();
-    addNewProject('Shopping List');
-    addNewProject('Housework');
-    addNewProject('Favourite movies');
-    addNewProject('Website');
+    addProjectFilter('Shopping List');
+    addProjectFilter('Housework');
+    addProjectFilter('Favourite movies');
+    addProjectFilter('Website');
 }
 
-events.on('updateLiveFilter', setLiveFilter);
-events.on('requestLiveFilter', publishLiveFilter)
-events.on('liveFilterUpdated', publishLiveFilter)
-
-// events.on('filterSelected', setLiveFilter);
-// events.on('filterUpdated', applyFilter);
-events.on('filterAdd', addFilter);
-events.on('filterRemove', removeFilterByID);
-events.on('filterEdit', editFilter);
-events.on('runDemo', runDemoFilters);
 
 export {
     applyFilter,
-    addNewProject,
+    addProjectFilter,
     addDefaultFilters,
     runDemoFilters,
     removeFilterByID,
