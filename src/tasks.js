@@ -1,5 +1,7 @@
 import { events } from './pubSub';
 import { genID as taskIDFactory} from './idGenerator.js';
+// import { addDays } from '../node_modules/date-fns';
+import { addDays, format } from 'date-fns';
 
 const _tasks = [];
 const IDGenerator = taskIDFactory();
@@ -26,7 +28,7 @@ function createTask (name, description, due, priority, project, status='pending'
         selected,
         id,
     }
-        
+
     function getAttribute(attribute){
         return _task[attribute];
     }
@@ -38,7 +40,7 @@ function createTask (name, description, due, priority, project, status='pending'
     return {
         name, 
         description,
-        due,
+        due: due ? new Date(due) : undefined,
         priority,
         project,
         status,
@@ -48,8 +50,8 @@ function createTask (name, description, due, priority, project, status='pending'
 }
 
 function addTask(newTask) {
-        _tasks.push(newTask);
-        events.emit('tasksUpdated', listTasks());
+    _tasks.push(newTask);
+    events.emit('tasksUpdated', listTasks());
 } 
 
 function removeTaskByID(id) {
@@ -120,9 +122,22 @@ function runDemoTasks() {
     addTask(demoTask2);
     
     const demoTask3 = createTask('Buy a banana');
+    demoTask3['description'] = 'from Tesco';
+    demoTask3['due'] = new Date();
     demoTask3['project'] = 'Shopping List';
     demoTask3['priority'] = '1';
     addTask(demoTask3);
+    
+    const demoLimitTask = createTask(
+        'aaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+        );
+    demoLimitTask['description'] = 
+        'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+    demoLimitTask['project'] = 
+        'ccccccccccccccccccccccccccccc';
+    demoLimitTask['due'] = new Date();
+    demoLimitTask['priority'] = '1';
+    addTask(demoLimitTask);
     
 }
 

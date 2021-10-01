@@ -18,6 +18,9 @@ const _icons = {
     'delete': 'delete', 
     'edit': 'edit',
     'add': 'add',
+    
+    'submit': 'done',
+    'close': 'close',
 }
 
 function matchIcon (iconName) {

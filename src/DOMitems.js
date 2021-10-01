@@ -1,6 +1,11 @@
 import { events } from './pubSub.js';
 import { createTask } from './tasks.js';
 import { createGoogleIcon, materialIconsOutlinedStylesheetLink } from './googleFonts.js';
+import { format } from 'date-fns';
+
+// TODO:
+// - set autofocus on both popups
+// - manage local storage
 
 document.head.appendChild(materialIconsOutlinedStylesheetLink);
 
@@ -213,11 +218,19 @@ function createNewFilterPopUp() {
     const popUpBox = document.createElement('div');
     popUpBox.classList.add('newFilterPopUp', 'popUp')
     
-    const closeButton = createCloseButton();
-    popUpBox.appendChild(closeButton);
-
     const newFilterForm = createNewFilterForm();
     popUpBox.appendChild(newFilterForm);
+
+    const submitButton = createGoogleIcon('submit');
+    submitButton.classList.add('submitButton');
+    submitButton.addEventListener('click', (e) => {
+        document.getElementById('filterForm').requestSubmit();
+    });
+    popUpBox.appendChild(submitButton);
+
+    const cancelButton = createCloseButton();
+    cancelButton.classList.add('filterCloseButton');
+    popUpBox.appendChild(cancelButton);
 
     return popUpBox;
 }
@@ -226,18 +239,12 @@ function createNewFilterForm() {
     const addFilterForm = document.createElement('form');
     addFilterForm.id = 'filterForm';
 
-    const formTitle = document.createElement('h3');
-    formTitle.textContent ='New Filter';
-    addFilterForm.appendChild(formTitle);
-
-    const nameInputLabel = document.createElement('label');
-    nameInputLabel.htmlFor = 'filterNameInput';
-    nameInputLabel.textContent = 'Name: '
-    addFilterForm.appendChild(nameInputLabel);
-
     const filterNameInput = document.createElement('input');
     filterNameInput.className = 'newFilterInput';
     filterNameInput.id = 'filterNameInput';
+    filterNameInput.placeholder = 'Give your project a name!';
+    filterNameInput.maxLength = '20';
+    filterNameInput.required = true;
     addFilterForm.appendChild(filterNameInput);
 
     addFilterForm.addEventListener('submit', handleSaveFilter);
@@ -319,25 +326,29 @@ function createTaskEntry(task) {
     taskLabel.htmlFor = `checkID${task.id}`;
     taskEntry.appendChild(taskLabel);
     
+    // Task Name
     const taskName = document.createElement('span');
+    taskName.classList.add('taskEntryName');
     taskName.textContent = task.name;
     taskLabel.appendChild(taskName);
 
     // Task Description
     const taskDescription = document.createElement('span');
+    taskDescription.classList.add('taskEntryDescription');
     taskDescription.textContent = task.description ? task.description : '';
     taskLabel.appendChild(taskDescription);
 
     // Task Due Date
     const taskDueDate = document.createElement('span');
-    taskDueDate.textContent = task.due;
+    taskDueDate.classList.add('taskEntryDueDate');
+    taskDueDate.textContent = task.due ? format(task.due, 'dd/M/y') : '';
     taskLabel.appendChild(taskDueDate);
 
     // Task Priority Icon
     // const taskPriorityIcon = document.createElement('span');
     const taskPriorityIcon = createGoogleIcon('priority');
     taskPriorityIcon.classList.add('taskIcon', `priority${task.priority}`);
-    taskLabel.appendChild(taskPriorityIcon);
+    taskEntry.appendChild(taskPriorityIcon);
 
     // Task Edit Icon
     const taskEditIcon = createGoogleIcon('edit');
@@ -405,40 +416,48 @@ function createPopUpOverLay() {
 function createNewTaskPopUp() {
     const popUpBox = document.createElement('div');
     popUpBox.classList.add('newTaskPopUp', 'popUp')
-    
-    const closeButton = createCloseButton();
-    popUpBox.appendChild(closeButton);
 
     const newTaskForm = createNewTaskForm();
     popUpBox.appendChild(newTaskForm);
+    
+    const formOptionsDiv = document.createElement('div');
+    formOptionsDiv.className = 'taskFormOptionsDiv';
+    popUpBox.appendChild(formOptionsDiv);
+    
+    const saveTaskButton = createGoogleIcon('submit');
+    saveTaskButton.classList.add('submitButton');
+    saveTaskButton.addEventListener('click', () => {
+        document.getElementById('taskForm').requestSubmit();
+    })
+    formOptionsDiv.appendChild(saveTaskButton);
+
+    const closeButton = createCloseButton();
+    formOptionsDiv.appendChild(closeButton);
 
     return popUpBox;
 }
 
 function createCloseButton() {
-    const closeButton = document.createElement('a');
-    closeButton.className = 'close';
+    const closeButton = createGoogleIcon('close');
+    closeButton.classList.add('closeButton');
     closeButton.href = '#';
-
-    // click close button to exit
-    closeButton.addEventListener('click', (e) => {
-        closePopUps();
-    });
+    closeButton.addEventListener('click', () => closePopUps());
 
     return closeButton;
 }
 
 function closePopUps() {
-    document.querySelectorAll('.popUp').forEach(element => element.classList.add('inactive'));
+    document.querySelectorAll('.popUp').forEach((element) => {
+        element.classList.add('inactive')
+    });
+    document.querySelectorAll('form').forEach((element) => {
+        element.reset();
+    });
 }
 
 function createNewTaskForm() {
     const addTaskForm = document.createElement('form');
     addTaskForm.id = 'taskForm';
-
-    const formTitle = document.createElement('h3');
-    formTitle.textContent ='New Task';
-    addTaskForm.appendChild(formTitle);
 
     const nameInputLabel = document.createElement('label');
     nameInputLabel.htmlFor = 'taskNameInput';
@@ -448,6 +467,8 @@ function createNewTaskForm() {
     const taskNameInput = document.createElement('input');
     taskNameInput.className = 'newTaskInput';
     taskNameInput.id = 'taskNameInput';
+    taskNameInput.maxLength = 29;
+    taskNameInput.required = true;
     addTaskForm.appendChild(taskNameInput);
     
     const descriptionInputLabel = document.createElement('label');
@@ -455,9 +476,12 @@ function createNewTaskForm() {
     descriptionInputLabel.textContent = 'Description: '
     addTaskForm.appendChild(descriptionInputLabel);
     
-    const taskDescriptionInput = document.createElement('input');
+    const taskDescriptionInput = document.createElement('textarea');
     taskDescriptionInput.className = 'newTaskInput';
     taskDescriptionInput.id = 'taskDescriptionInput';
+    taskDescriptionInput.maxLength = 56;
+    taskDescriptionInput.rows = 2;
+    taskDescriptionInput.cols = 27;
     addTaskForm.appendChild(taskDescriptionInput);
     
     const projectInputLabel = document.createElement('label');
@@ -499,10 +523,10 @@ function createNewTaskForm() {
         taskPriorityInput.appendChild(option);
     })
 
-    const saveTaskButton = document.createElement('button');
-    saveTaskButton.textContent = 'Save task';
-    saveTaskButton.className = 'save';
-    addTaskForm.appendChild(saveTaskButton);
+    // const saveTaskButton = document.createElement('button');
+    // saveTaskButton.textContent = 'Save task';
+    // saveTaskButton.classList.add('save');
+    // addTaskForm.appendChild(saveTaskButton);
 
     addTaskForm.addEventListener('submit', handleSaveTask);
 

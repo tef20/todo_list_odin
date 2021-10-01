@@ -144,7 +144,6 @@ h3 {
 /* TASKS SECTION */
 #taskViewer {
     padding: 20px 30px;
-    flex-basis: 100%;
 }
 
 #taskViewer h2 {
@@ -188,16 +187,37 @@ h3 {
 
 #taskViewer li label {
     display: flex;
-    width: 80%;
-    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+    /* justify-content: space-between; */
     
     cursor: pointer;
 }
 
-#taskViewer li label span {
+li label span {
     /* border: solid red 1px; */
-    width: 100%;
+    /* width: 100%; */
     font-size: 20px;
+}
+
+.taskEntryName {
+    /* width: 30%; */
+    flex: 2;
+}
+
+.taskEntryDescription {
+    font-size: 1rem;
+    /* width: 60%; */
+    flex: 3;
+    /* background-color: red; */
+    color: grey;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.taskEntryDueDate {
+    /* width: 10%; */
+    flex: 1;
 }
 
 .priority1 {
@@ -240,6 +260,8 @@ h3 {
     background-color: rgb(216, 250, 166);
 }
 
+/* Popups */
+
 .popUpOverLay {
     display: flex;
     position: fixed;
@@ -257,10 +279,6 @@ h3 {
     justify-content: center;
 }
 
-.inactive {
-    display: none;
-}
-
 .newTaskPopUp,
 .newFilterPopUp {
     background-color: aliceblue;
@@ -269,31 +287,68 @@ h3 {
     padding: 10px;
 }
 
+/* New filter popup */
+.newFilterPopUp {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#filterNameInput {
+    margin: 5px;
+    font-size: 1em;
+}
+
+.submitButton,
+.closeButton {
+    cursor: pointer;
+    padding: 2px;
+}
+
+.submitButton:hover {
+    color: greenyellow;
+}
+
+.closeButton:hover {
+    color: red;
+}
+
+/* New task popup */
+.newTaskPopUp {
+    display: flex;
+    flex-direction: column;
+}
+
+#taskForm {
+    display: flex;
+    flex-direction: column;
+}
+
 .newTaskInput {
-    display: block;
     margin: 5px;
 }
 
-.close {
-    position: relative;
-    right: -200px;
-    top: 10px; 
-    opacity: 0.5;
-  }
-  .close:hover {
-    opacity: 1;
-  }
-  .close:before, .close:after {
-    position: absolute;
-    left: 15px;
-    content: ' ';
-    height: 20px;
-    width: 2px;
-    background-color: #333;
-  }
-  .close:before {
-    transform: rotate(45deg);
-  }
-  .close:after {
-    transform: rotate(-45deg);
-  }
+#taskDescriptionInput {
+    height: 2rem;
+    resize: none;
+}
+
+.taskFormOptionsDiv {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.inactive {
+    display: none;
+}
+
+/* FOR TESTING! */
+.popUpOverLay,
+.newFilterPopUp {
+    /* display: flex; */
+}
+/* FOR TESTING! */
+.popUpOverLay,
+.newTaskPopUp {
+    /* display: flex; */
+}

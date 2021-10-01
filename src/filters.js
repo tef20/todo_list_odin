@@ -1,5 +1,6 @@
 import { events } from './pubSub.js';
 import { genID as filterIDFactory } from './idGenerator.js';
+import { addDays, compareAsc } from 'date-fns';
 
 const _filters = {}
 
@@ -82,15 +83,17 @@ function editFilter(filterID, newFilterDetails) {
     }
 }
 
-function makeDueDaysCondition(days) {
+function makeDueByDaysCondition(days) {
     return (task) => {
-        if (Object.keys(task).includes('due')) {
-                return (task['due'] < days) ? true : false;
+        if (Object.keys(task).includes('due') && task['due'] !== undefined) {
+            const taskDueDate = task['due'];
+            const dueByDate = addDays(new Date(), days);
+            return (compareAsc(taskDueDate, dueByDate) <= 0) ? true : false;
         }
     }
 }
 
-function makeDueByCondition(date) {
+function makeDueByDateCondition(date) {
     return (task) => {
         if (Object.keys(task).includes('due')) {
                 return (task['due'] < date) ? true : false;
@@ -129,20 +132,20 @@ function addDefaultFilters() {
     setLiveFilter('0');
 
     // today
-    // const todayFilter = createFilter('Today', 'due', makeDueDaysCondition(0));
-    // addFilter(todayFilter);
+    const todayFilter = createFilter('Today', 'due', [makeDueByDaysCondition(0)]);
+    addFilter(todayFilter);
 
     // upcoming
-    // const upcomingFilter = createFilter('Upcoming', 'due', makeDueDaysCondition(6));
-    // addFilter(upcomingFilter);
+    const upcomingFilter = createFilter('Upcoming', 'due', [makeDueByDaysCondition(6)]);
+    addFilter(upcomingFilter);
 }
 
 function runDemoFilters() {
     clearAllFilters();
     addDefaultFilters();
-    addProjectFilter('Shopping List');
+    addProjectFilter('Shopping list');
     addProjectFilter('Housework');
-    addProjectFilter('Favourite movies');
+    addProjectFilter('Films to watch');
     addProjectFilter('Website');
 }
 
