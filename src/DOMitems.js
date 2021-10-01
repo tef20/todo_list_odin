@@ -212,6 +212,7 @@ function createNewFilterButton() {
 function displayNewFilterPopUp() {
     document.querySelector('.popUpOverLay').classList.remove('inactive');
     document.querySelector('.newFilterPopUp').classList.remove('inactive');
+    document.getElementById('filterNameInput').focus();
 }
 
 function createNewFilterPopUp() {
@@ -391,6 +392,7 @@ function createAddTaskButton() {
 function displayNewTaskPopUp() {
     document.querySelector('.popUpOverLay').classList.remove('inactive');
     document.querySelector('.newTaskPopUp').classList.remove('inactive');
+    document.getElementById('taskNameInput').focus();
 }
 
 function createPopUpOverLay() {
