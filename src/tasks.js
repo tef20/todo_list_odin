@@ -15,7 +15,7 @@ function listTasks() {
     return JSON.parse(JSON.stringify(_tasks));
 }
 
-function createTask (name, description='', due='', priority='medium', project='unassigned', status='pending', selected=true, id=IDGenerator.newID()) {
+function createTask (name, description, due, priority, project, status='pending', selected=true, id=IDGenerator.newID()) {
     const _task = {
         name, 
         description,
@@ -111,17 +111,17 @@ function runDemoTasks() {
 
     const demoTask1 = createTask('Wash the dishes');
     demoTask1['project'] = 'Housework';
-    demoTask1['priority'] = 'medium';
+    demoTask1['priority'] = '2';
     addTask(demoTask1);
     
     const demoTask2 = createTask('Learn html');
     demoTask2['project'] = 'Website';
-    demoTask2['priority'] = 'high';
+    demoTask2['priority'] = '3';
     addTask(demoTask2);
     
     const demoTask3 = createTask('Buy a banana');
     demoTask3['project'] = 'Shopping List';
-    demoTask3['priority'] = 'low';
+    demoTask3['priority'] = '1';
     addTask(demoTask3);
     
 }

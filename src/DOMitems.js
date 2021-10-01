@@ -159,7 +159,7 @@ function createFilterTab({id, name, type}) {
 
     if (type === 'project') {
         const deleteFilterIcon = createGoogleIcon('delete');
-        deleteFilterIcon.classList.add('expandedTab', 'tabIcon');
+        deleteFilterIcon.classList.add('expandedTab', 'tabIcon', 'deleteFilterIcon');
         deleteFilterIcon.dataset.filterId = id;
         deleteFilterIcon.dataset.filterName = name;
 
@@ -476,6 +476,7 @@ function createNewTaskForm() {
     addTaskForm.appendChild(dueLabel);
     
     const taskDueInput = document.createElement('input');
+    taskDueInput.type = 'date';
     taskDueInput.className = 'newTaskInput';
     taskDueInput.id = 'taskDueInput';
     addTaskForm.appendChild(taskDueInput);
@@ -485,10 +486,18 @@ function createNewTaskForm() {
     priorityInputLabel.textContent = 'Priority: '
     addTaskForm.appendChild(priorityInputLabel);
     
-    const taskPriorityInput = document.createElement('input');
+    const taskPriorityInput = document.createElement('select');
     taskPriorityInput.className = 'newTaskInput';
     taskPriorityInput.id = 'taskPriorityInput';
     addTaskForm.appendChild(taskPriorityInput);
+
+    const priorityLevels = {1: 'low', 2: 'medium',3: 'high'};
+    Object.keys(priorityLevels).forEach((level) => {
+        const option = document.createElement('option');
+        option.textContent = priorityLevels[level];
+        option.value = level;
+        taskPriorityInput.appendChild(option);
+    })
 
     const saveTaskButton = document.createElement('button');
     saveTaskButton.textContent = 'Save task';

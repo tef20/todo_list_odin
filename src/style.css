@@ -71,6 +71,11 @@ h3 {
 
 .toggleIcon {
     transition: transform .25s;
+    opacity: 0.8;
+}
+
+.toggleIcon:hover {
+    opacity: 1;
 }
 
 .toggleIcon.collapsed {
@@ -102,6 +107,14 @@ h3 {
 .tabIcon {
     padding: 5px;
     cursor: pointer;
+}
+
+.deleteFilterIcon {
+    opacity: 0.7;
+}
+
+.deleteFilterIcon:hover {
+    opacity: 1;
 }
 
 #sidebar .selectedTab {
@@ -187,20 +200,25 @@ h3 {
     font-size: 20px;
 }
 
-.prioritylow {
+.priority1 {
     color: green;
 }
 
-.prioritymedium {
+.priority2 {
     color: orange;
 }
 
-.priorityhigh {
+.priority3 {
     color: red;
 }
 
 .taskIcon {
     cursor: pointer;
+    opacity: 0.7;
+}
+
+.taskIcon:hover {
+    opacity: 1;
 }
 
 #addTask {
