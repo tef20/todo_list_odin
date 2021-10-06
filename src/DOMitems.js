@@ -4,16 +4,17 @@ import { createGoogleIcon, materialIconsOutlinedStylesheetLink } from './googleF
 import { format } from 'date-fns';
 
 // TODO:
-// - set autofocus on both popups
+// - allow editing tasks 
 // - manage local storage
-
-document.head.appendChild(materialIconsOutlinedStylesheetLink);
+// - tidy up!
 
 const content = createMainContainer();
 document.body.appendChild(content);
 
 // Load basic page
-function loadPage() {      
+function loadPage() {  
+    document.head.appendChild(materialIconsOutlinedStylesheetLink);
+    
     // create basic page
     // header
     const header = createHeader();
@@ -286,7 +287,6 @@ function createViewer () {
 
     // New Task Button
     const addNewTaskButton = createAddTaskButton();
-    // addNewTaskButton.addEventListener('click', openNewTaskForm)
     tasksViewer.appendChild(addNewTaskButton);
 
     
@@ -481,7 +481,7 @@ function createNewTaskForm() {
     const taskDescriptionInput = document.createElement('textarea');
     taskDescriptionInput.className = 'newTaskInput';
     taskDescriptionInput.id = 'taskDescriptionInput';
-    taskDescriptionInput.maxLength = 56;
+    taskDescriptionInput.maxLength = 29;
     taskDescriptionInput.rows = 2;
     taskDescriptionInput.cols = 27;
     addTaskForm.appendChild(taskDescriptionInput);

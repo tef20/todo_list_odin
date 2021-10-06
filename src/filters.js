@@ -2,7 +2,7 @@ import { events } from './pubSub.js';
 import { genID as filterIDFactory } from './idGenerator.js';
 import { addDays, compareAsc } from 'date-fns';
 
-const _filters = {}
+const _filters = localStorage.getItem('filters') || {};
 
 const IDGenerator = filterIDFactory();
 

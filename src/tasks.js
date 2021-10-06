@@ -1,9 +1,7 @@
 import { events } from './pubSub';
 import { genID as taskIDFactory} from './idGenerator.js';
-// import { addDays } from '../node_modules/date-fns';
-import { addDays, format } from 'date-fns';
 
-const _tasks = [];
+const _tasks = localStorage.getItem('tasks') || [];
 const IDGenerator = taskIDFactory();
 
 events.on('taskAdd', addTask);
@@ -15,6 +13,10 @@ events.on('tasksUpdated', requestLiveFilter);
 
 function listTasks() {
     return JSON.parse(JSON.stringify(_tasks));
+}
+
+function tasksEmpty() {
+    return !_tasks.length;
 }
 
 function createTask (name, description, due, priority, project, status='pending', selected=true, id=IDGenerator.newID()) {
@@ -129,10 +131,10 @@ function runDemoTasks() {
     addTask(demoTask3);
     
     const demoLimitTask = createTask(
-        'aaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+        'aaaaaaaaaaaaaaaaaaaa'
         );
     demoLimitTask['description'] = 
-        'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+        'bbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
     demoLimitTask['project'] = 
         'ccccccccccccccccccccccccccccc';
     demoLimitTask['due'] = new Date();
@@ -143,6 +145,7 @@ function runDemoTasks() {
 
 export {
     listTasks,
+    tasksEmpty,
     createTask,
     addTask,
     removeTaskByID,
